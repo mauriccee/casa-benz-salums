@@ -1,0 +1,1011 @@
+{% extends 'base.html' %}
+
+{% block title %}Ferienhaus Laax – Belegungsplan & Nebenkosten{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    
+    <!-- Header Block -->
+    <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6 mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+            <h1 class="text-2xl font-bold text-slate-900">Familien-Portal – Via pendas 27</h1>
+            <p class="text-sm text-slate-500 mt-1">
+                Internes Tool für Chiara Benz, Seraina Benz und Alex Benz zur Absprache, Mängelverwaltung und Nebenkostenabrechnung.
+            </p>
+        </div>
+        
+        <!-- Tab Navigation Buttons -->
+        <div class="flex bg-slate-100 p-1 rounded-lg border border-slate-200">
+            <button onclick="switchTab('calendar-tab')" id="btn-calendar-tab" class="px-4 py-2 text-xs font-semibold rounded-md bg-white text-slate-800 shadow-sm border border-slate-200/50 transition">
+                <i class="fa-solid fa-calendar-days mr-1.5"></i> Belegungsplan
+            </button>
+            <button onclick="switchTab('defects-tab')" id="btn-defects-tab" class="px-4 py-2 text-xs font-semibold rounded-md text-slate-600 hover:text-slate-800 transition">
+                <i class="fa-solid fa-screwdriver-wrench mr-1.5"></i> Mängelliste
+            </button>
+            <button onclick="switchTab('expenses-tab')" id="btn-expenses-tab" class="px-4 py-2 text-xs font-semibold rounded-md text-slate-600 hover:text-slate-800 transition">
+                <i class="fa-solid fa-file-invoice-dollar mr-1.5"></i> Ausgaben & Belege
+            </button>
+        </div>
+    </div>
+
+    <!-- ==================== TAB 1: CALENDAR & BOOKING ==================== -->
+    <div id="calendar-tab" class="tab-content space-y-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- Left: Simplified Booking Form -->
+            <div class="space-y-6">
+                <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
+                    <h2 class="text-base font-bold text-slate-900 border-b border-slate-100 pb-3 mb-4">
+                        <i class="fa-regular fa-calendar-plus mr-1.5 text-slate-500"></i>Termin eintragen
+                    </h2>
+                    
+                    <form id="booking-form" onsubmit="submitBooking(event)" class="space-y-4">
+                        <div>
+                            <label for="guest_name" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider">Wer bucht? *</label>
+                            <select id="guest_name" required class="mt-1 block w-full px-3 py-2 border border-slate-300 rounded shadow-sm focus:outline-none focus:ring-slate-500 focus:border-slate-500 text-sm bg-white">
+                                <option value="" disabled selected>Name auswählen...</option>
+                                <option value="Chiara Benz">Chiara Benz</option>
+                                <option value="Seraina Benz">Seraina Benz</option>
+                                <option value="Alex Benz">Alex Benz</option>
+                            </select>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label for="start_date" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider">Anreise *</label>
+                                <input type="date" id="start_date" required onchange="onBookingDatesChanged()" class="mt-1 block w-full px-3 py-2 border border-slate-300 rounded shadow-sm focus:outline-none focus:ring-slate-500 focus:border-slate-500 text-sm">
+                            </div>
+                            <div>
+                                <label for="end_date" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider">Abreise *</label>
+                                <input type="date" id="end_date" required onchange="onBookingDatesChanged()" class="mt-1 block w-full px-3 py-2 border border-slate-300 rounded shadow-sm focus:outline-none focus:ring-slate-500 focus:border-slate-500 text-sm">
+                            </div>
+                        </div>
+
+                        <!-- Historical Overlay Banner in Form -->
+                        <div id="historical-form-alert" class="hidden bg-slate-50 border border-slate-200 rounded p-3 text-xs text-slate-600">
+                            <h4 class="font-semibold text-slate-700 mb-1"><i class="fa-solid fa-clock-rotate-left mr-1"></i> Historischer Rückblick:</h4>
+                            <ul id="historical-form-list" class="list-disc pl-4 space-y-1"></ul>
+                        </div>
+
+                        <div>
+                            <label for="message" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider">Notiz (optional)</label>
+                            <textarea id="message" rows="2" class="mt-1 block w-full px-3 py-2 border border-slate-300 rounded shadow-sm focus:outline-none focus:ring-slate-500 focus:border-slate-500 text-sm" placeholder="z.B. Wer kommt mit, besondere Vorhaben?"></textarea>
+                        </div>
+                        
+                        <div class="text-[10px] text-slate-400 leading-tight">
+                            <i class="fa-solid fa-circle-info mr-1"></i> Nach dem Absenden geht automatisch eine E-Mail-Benachrichtigung an die beiden anderen Personen.
+                        </div>
+
+                        <button type="submit" class="w-full bg-slate-800 hover:bg-slate-900 text-white py-2.5 rounded text-sm font-semibold transition mt-2 shadow-sm">
+                            Termin reservieren
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Calendar Legend -->
+                <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-4 space-y-3">
+                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Farblegende</h3>
+                    <div class="grid grid-cols-2 gap-2 text-xs font-medium">
+                        <div class="flex items-center"><span class="w-3 h-3 bg-blue-100 border border-blue-300 rounded mr-2"></span> Schulferien (ZH)</div>
+                        <div class="flex items-center"><span class="w-3 h-3 bg-red-100 border border-red-300 rounded mr-2"></span> Feiertage (ZH)</div>
+                        <div class="flex items-center"><span class="w-3 h-3 bg-orange-100 border border-orange-300 rounded mr-2"></span> Angefragt</div>
+                        <div class="flex items-center"><span class="w-3 h-3 bg-green-100 border border-green-300 rounded mr-2"></span> Bestätigt</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Interactive Calendar -->
+            <div class="lg:col-span-2 bg-white rounded-lg shadow-sm border border-slate-200 p-4 sm:p-6">
+                <div id="calendar" class="min-h-[500px]"></div>
+            </div>
+        </div>
+        
+        <!-- Admin Section Toggle (at the bottom of calendar tab) -->
+        <div class="border-t border-slate-200 pt-6">
+            <div class="text-center">
+                <button onclick="toggleAdminPanel()" class="inline-flex items-center text-xs font-semibold text-slate-400 hover:text-slate-700 transition">
+                    <i class="fa-solid fa-lock mr-1.5"></i> Admin-Freigaben
+                </button>
+            </div>
+            
+            <div id="admin-pin-prompt" class="hidden mt-4 max-w-sm mx-auto bg-white p-5 rounded-lg shadow border border-slate-200">
+                <h4 class="font-bold text-slate-800 text-xs mb-1">Admin-PIN erforderlich</h4>
+                <div class="flex space-x-2 mt-2">
+                    <input type="password" id="admin-pin-input" class="flex-grow px-3 py-1.5 border border-slate-300 rounded text-xs focus:ring-slate-500 focus:border-slate-500" placeholder="Standard: 1234">
+                    <button onclick="submitAdminPIN()" class="bg-slate-800 text-white px-4 py-1.5 rounded text-xs font-semibold hover:bg-slate-900 transition">Login</button>
+                </div>
+            </div>
+            
+            <div id="admin-panel" class="hidden mt-6 bg-white rounded-lg shadow border border-slate-200 overflow-hidden">
+                <div class="bg-slate-800 text-white px-6 py-3 flex justify-between items-center">
+                    <span class="text-xs font-bold">Buchungsanfragen verwalten</span>
+                    <button onclick="logoutAdmin()" class="text-[10px] text-slate-300 hover:text-white border border-slate-600 px-2 py-0.5 rounded transition">Abmelden</button>
+                </div>
+                <div class="overflow-x-auto text-xs">
+                    <table class="w-full text-left text-slate-500">
+                        <thead class="bg-slate-50 border-b border-slate-100 uppercase tracking-wider text-slate-400 font-semibold">
+                            <tr>
+                                <th class="px-4 py-3">Wer bucht</th>
+                                <th class="px-4 py-3">Zeitraum</th>
+                                <th class="px-4 py-3">Notiz</th>
+                                <th class="px-4 py-3">Status</th>
+                                <th class="px-4 py-3 text-right">Aktionen</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-bookings-table-body" class="divide-y divide-slate-100">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== TAB 2: DEFECTS LIST ==================== -->
+    <div id="defects-tab" class="tab-content hidden space-y-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- Left: Add Defect Form -->
+            <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
+                <h2 class="text-base font-bold text-slate-900 border-b border-slate-100 pb-3 mb-4">
+                    <i class="fa-solid fa-circle-exclamation mr-1.5 text-slate-500"></i>Mangel melden
+                </h2>
+                
+                <form id="defect-form" onsubmit="submitDefect(event)" class="space-y-4" enctype="multipart/form-data">
+                    <div>
+                        <label for="defect_reported_by" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider">Gemeldet von *</label>
+                        <select id="defect_reported_by" required class="mt-1 block w-full px-3 py-2 border border-slate-300 rounded shadow-sm focus:outline-none focus:ring-slate-500 focus:border-slate-500 text-sm bg-white">
+                            <option value="" disabled selected>Name auswählen...</option>
+                            <option value="Chiara Benz">Chiara Benz</option>
+                            <option value="Seraina Benz">Seraina Benz</option>
+                            <option value="Alex Benz">Alex Benz</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="defect_description" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider">Beschreibung des Mangels *</label>
+                        <textarea id="defect_description" required rows="3" class="mt-1 block w-full px-3 py-2 border border-slate-300 rounded shadow-sm focus:outline-none focus:ring-slate-500 focus:border-slate-500 text-sm" placeholder="Was ist defekt? Z.B. Glühbirne Küche, Heizung Schlafzimmer wackelt etc."></textarea>
+                    </div>
+                    
+                    <div>
+                        <label for="defect_image" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider">Foto hochladen (optional)</label>
+                        <input type="file" id="defect_image" accept="image/*" class="mt-1 block w-full text-xs text-slate-500 file:mr-4 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200">
+                    </div>
+
+                    <button type="submit" class="w-full bg-slate-800 hover:bg-slate-900 text-white py-2.5 rounded text-sm font-semibold transition shadow-sm">
+                        Mangel speichern
+                    </button>
+                </form>
+            </div>
+
+            <!-- Right: Defects List Table -->
+            <div class="lg:col-span-2 bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
+                    <h2 class="text-base font-bold text-slate-900">Mängelliste</h2>
+                    <span class="text-xs text-slate-400" id="defects-summary">Lade Mängel...</span>
+                </div>
+                <div class="overflow-x-auto text-xs">
+                    <table class="w-full text-left text-slate-500">
+                        <thead class="bg-slate-50 border-b border-slate-100 uppercase tracking-wider text-slate-400 font-semibold">
+                            <tr>
+                                <th class="px-4 py-3">Mangel / Beschreibung</th>
+                                <th class="px-4 py-3">Foto</th>
+                                <th class="px-4 py-3">Gemeldet von</th>
+                                <th class="px-4 py-3">Status</th>
+                                <th class="px-4 py-3 text-right">Aktionen</th>
+                            </tr>
+                        </thead>
+                        <tbody id="defects-table-body" class="divide-y divide-slate-100">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== TAB 3: EXPENSES LIST ==================== -->
+    <div id="expenses-tab" class="tab-content hidden space-y-6">
+        
+        <!-- Expense Split Analysis Banner (Kassensturz) -->
+        <div class="bg-slate-900 text-white rounded-lg p-6 shadow-sm border border-slate-800 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+            <div>
+                <h3 class="font-bold text-lg"><i class="fa-solid fa-calculator mr-2 text-amber-400"></i>Kassensturz</h3>
+                <p class="text-xs text-slate-400 mt-1">Ausgabenübersicht und Verrechnung zwischen Chiara, Seraina und Alex Benz.</p>
+            </div>
+            <div class="flex justify-around md:col-span-2 text-center border-t md:border-t-0 md:border-l border-slate-800 pt-4 md:pt-0 md:pl-6">
+                <div>
+                    <span class="text-slate-400 text-xs uppercase block">Ausgaben Gesamt</span>
+                    <span id="expenses-total-amt" class="text-xl font-bold text-amber-400">0.00 CHF</span>
+                </div>
+                <div>
+                    <span class="text-slate-400 text-xs uppercase block">Anteil pro Person</span>
+                    <span id="expenses-share-amt" class="text-xl font-bold text-slate-200">0.00 CHF</span>
+                </div>
+                <div>
+                    <span class="text-slate-400 text-xs uppercase block">Ausgleichzahlungen</span>
+                    <div id="expenses-settlement" class="text-xs font-semibold text-green-400 mt-1 space-y-1">Alles ausgeglichen.</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- Left: Add Expense Form -->
+            <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
+                <h2 class="text-base font-bold text-slate-900 border-b border-slate-100 pb-3 mb-4">
+                    <i class="fa-solid fa-cart-flatbed-suitcases mr-1.5 text-slate-500"></i>Ausgabe eintragen
+                </h2>
+                
+                <form id="expense-form" onsubmit="submitExpense(event)" class="space-y-4" enctype="multipart/form-data">
+                    <div>
+                        <label for="expense_paid_by" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider">Wer hat bezahlt? *</label>
+                        <select id="expense_paid_by" required class="mt-1 block w-full px-3 py-2 border border-slate-300 rounded shadow-sm focus:outline-none focus:ring-slate-500 focus:border-slate-500 text-sm bg-white">
+                            <option value="" disabled selected>Name auswählen...</option>
+                            <option value="Chiara Benz">Chiara Benz</option>
+                            <option value="Seraina Benz">Seraina Benz</option>
+                            <option value="Alex Benz">Alex Benz</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="expense_item" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider">Gegenstand / Zweck *</label>
+                        <input type="text" id="expense_item" required class="mt-1 block w-full px-3 py-2 border border-slate-300 rounded shadow-sm focus:outline-none focus:ring-slate-500 focus:border-slate-500 text-sm" placeholder="z.B. Kaminholz, Kaffeemaschine, Reinigungsmittel">
+                    </div>
+                    
+                    <div>
+                        <label for="expense_amount" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider">Betrag (CHF) *</label>
+                        <input type="number" id="expense_amount" step="0.05" required class="mt-1 block w-full px-3 py-2 border border-slate-300 rounded shadow-sm focus:outline-none focus:ring-slate-500 focus:border-slate-500 text-sm" placeholder="0.00">
+                    </div>
+                    
+                    <div>
+                        <label for="expense_receipt" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider">Beleg hochladen (Bild/PDF, optional)</label>
+                        <input type="file" id="expense_receipt" accept="image/*,application/pdf" class="mt-1 block w-full text-xs text-slate-500 file:mr-4 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200">
+                    </div>
+
+                    <button type="submit" class="w-full bg-slate-800 hover:bg-slate-900 text-white py-2.5 rounded text-sm font-semibold transition shadow-sm">
+                        Ausgabe eintragen
+                    </button>
+                </form>
+            </div>
+
+            <!-- Right: Expenses List Table -->
+            <div class="lg:col-span-2 bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
+                    <h2 class="text-base font-bold text-slate-900">Ausgabenliste</h2>
+                    <span class="text-xs text-slate-400" id="expenses-summary">Lade Ausgaben...</span>
+                </div>
+                <div class="overflow-x-auto text-xs">
+                    <table class="w-full text-left text-slate-500">
+                        <thead class="bg-slate-50 border-b border-slate-100 uppercase tracking-wider text-slate-400 font-semibold">
+                            <tr>
+                                <th class="px-4 py-3">Gegenstand / Zweck</th>
+                                <th class="px-4 py-3 text-right">Betrag</th>
+                                <th class="px-4 py-3">Bezahlt von</th>
+                                <th class="px-4 py-3 text-center">Beleg</th>
+                                <th class="px-4 py-3">Datum</th>
+                                <th class="px-4 py-3 text-right">Aktionen</th>
+                            </tr>
+                        </thead>
+                        <tbody id="expenses-table-body" class="divide-y divide-slate-100">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Modal for Event Details -->
+<div id="event-modal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg shadow-xl border border-slate-200 max-w-sm w-full overflow-hidden">
+        <div class="px-5 py-3 border-b border-slate-100 flex justify-between items-center" id="modal-header-bg">
+            <h3 class="font-bold text-sm" id="modal-title">Eintragsdetails</h3>
+            <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="p-5 space-y-3 text-xs" id="modal-content">
+            <!-- Dynamic Content -->
+        </div>
+        <div class="px-5 py-3 bg-slate-50 border-t border-slate-100 text-right">
+            <button onclick="closeModal()" class="bg-slate-800 text-white px-3 py-1.5 rounded text-xs font-semibold hover:bg-slate-900 transition">Schließen</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let calendar;
+    let isAdminLoggedIn = false;
+    let adminPIN = "";
+    
+    // Tab switching logic
+    function switchTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+        document.getElementById(tabId).classList.remove('hidden');
+        
+        // Update tab buttons style
+        const buttons = {
+            'calendar-tab': 'btn-calendar-tab',
+            'defects-tab': 'btn-defects-tab',
+            'expenses-tab': 'btn-expenses-tab'
+        };
+        
+        for (const [key, btnId] of Object.entries(buttons)) {
+            const btn = document.getElementById(btnId);
+            if (key === tabId) {
+                btn.className = "px-4 py-2 text-xs font-semibold rounded-md bg-white text-slate-800 shadow-sm border border-slate-200/50 transition";
+            } else {
+                btn.className = "px-4 py-2 text-xs font-semibold rounded-md text-slate-600 hover:text-slate-800 transition";
+            }
+        }
+        
+        // Special actions on tab select
+        if (tabId === 'calendar-tab' && calendar) {
+            calendar.updateSize();
+        } else if (tabId === 'defects-tab') {
+            loadDefects();
+        } else if (tabId === 'expenses-tab') {
+            loadExpenses();
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('start_date').min = today;
+        document.getElementById('end_date').min = today;
+        
+        // Load Calendar
+        const calendarEl = document.getElementById('calendar');
+        calendar = new FullCalendar.Calendar(calendarEl, {
+            locale: 'de',
+            initialView: 'dayGridMonth',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,multiMonthYear'
+            },
+            buttonText: {
+                today: 'Heute',
+                month: 'Monat',
+                year: 'Jahr'
+            },
+            firstDay: 1, // Start week on Monday
+            events: function(info, successCallback, failureCallback) {
+                Promise.all([
+                    fetch('/api/holidays').then(r => r.json()),
+                    fetch('/api/bookings').then(r => r.json())
+                ])
+                .then(([holidays, bookings]) => {
+                    successCallback([...holidays, ...bookings]);
+                })
+                .catch(err => {
+                    console.error("Fehler beim Laden der Kalenderdaten:", err);
+                    failureCallback(err);
+                });
+            },
+            eventClick: function(info) {
+                showEventDetails(info.event);
+            },
+            height: 'auto'
+        });
+        calendar.render();
+        
+        // Check session storage for admin login persistence
+        const savedPIN = sessionStorage.getItem('adminPIN');
+        if (savedPIN) {
+            adminPIN = savedPIN;
+            isAdminLoggedIn = true;
+            document.getElementById('admin-panel').classList.remove('hidden');
+            document.getElementById('admin-pin-prompt').classList.add('hidden');
+            loadAdminBookingsTable();
+        }
+    });
+
+    // Date inputs validation & History comparison trigger
+    function onBookingDatesChanged() {
+        validateDates();
+        
+        const startDate = document.getElementById('start_date').value;
+        const endDate = document.getElementById('end_date').value;
+        const alertBox = document.getElementById('historical-form-alert');
+        const listEl = document.getElementById('historical-form-list');
+        
+        if (startDate && endDate) {
+            fetch(`/api/bookings/history?start_date=${startDate}&end_date=${endDate}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data && data.length > 0) {
+                    listEl.innerHTML = "";
+                    data.forEach(h => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `Vor <strong>${h.years_ago} Jahr(en) (${h.year})</strong> war <strong>${escapeHtml(h.guest_name)}</strong> in diesem Zeitraum im Ferienhaus.`;
+                        listEl.appendChild(li);
+                    });
+                    alertBox.classList.remove('hidden');
+                } else {
+                    alertBox.classList.add('hidden');
+                }
+            })
+            .catch(err => console.error("History fetch error:", err));
+        } else {
+            alertBox.classList.add('hidden');
+        }
+    }
+
+    function validateDates() {
+        const startDateInput = document.getElementById('start_date');
+        const endDateInput = document.getElementById('end_date');
+        
+        if (startDateInput.value) {
+            endDateInput.min = startDateInput.value;
+        }
+        
+        if (startDateInput.value && endDateInput.value) {
+            if (new Date(startDateInput.value) >= new Date(endDateInput.value)) {
+                alert('Abreisedatum muss nach dem Anreisedatum liegen.');
+                endDateInput.value = '';
+            }
+        }
+    }
+
+    function submitBooking(event) {
+        event.preventDefault();
+        
+        const guest_name = document.getElementById('guest_name').value;
+        const start_date = document.getElementById('start_date').value;
+        const end_date = document.getElementById('end_date').value;
+        const message = document.getElementById('message').value;
+
+        fetch('/api/bookings', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                guest_name,
+                start_date,
+                end_date,
+                message,
+                contact_person: 'Absprache in der Familie'
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert("Buchung erfolgreich eingetragen! Eine Benachrichtigung wurde versendet.");
+                document.getElementById('booking-form').reset();
+                document.getElementById('historical-form-alert').classList.add('hidden');
+                calendar.refetchEvents();
+                if (isAdminLoggedIn) {
+                    loadAdminBookingsTable();
+                }
+            } else {
+                alert('Fehler: ' + data.message);
+            }
+        })
+        .catch(err => {
+            console.error('Fehler beim Eintragen:', err);
+            alert('Konnte nicht eingetragen werden.');
+        });
+    }
+
+    function showEventDetails(event) {
+        const modal = document.getElementById('event-modal');
+        const titleEl = document.getElementById('modal-title');
+        const headerBg = document.getElementById('modal-header-bg');
+        const contentEl = document.getElementById('modal-content');
+        
+        const startDisplay = formatDateGerman(event.start);
+        let endDisplay = "";
+        
+        if (event.end) {
+            const endDate = new Date(event.end);
+            endDate.setDate(endDate.getDate() - 1);
+            endDisplay = formatDateGerman(endDate);
+        } else {
+            endDisplay = startDisplay;
+        }
+
+        const type = event.extendedProps.type || (event.id.startsWith('public') ? 'public_holiday' : 'school_holiday');
+        
+        if (type === 'public_holiday') {
+            headerBg.className = "px-5 py-3 border-b border-slate-100 flex justify-between items-center bg-red-50 text-red-900";
+            titleEl.innerText = "Feiertag (Zürich)";
+            contentEl.innerHTML = `
+                <div class="font-bold text-slate-800 text-sm">${event.title}</div>
+                <div class="mt-2 text-slate-500 text-xs">
+                    <strong>Datum:</strong> ${startDisplay}
+                </div>
+            `;
+            modal.classList.remove('hidden');
+        } else if (type === 'school_holiday') {
+            headerBg.className = "px-5 py-3 border-b border-slate-100 flex justify-between items-center bg-blue-50 text-blue-900";
+            titleEl.innerText = "Schulferien (Zürich)";
+            contentEl.innerHTML = `
+                <div class="font-bold text-slate-800 text-sm">${event.title}</div>
+                <div class="mt-2 text-slate-500 text-xs space-y-1">
+                    <div><strong>Von:</strong> ${startDisplay}</div>
+                    <div><strong>Bis:</strong> ${endDisplay}</div>
+                </div>
+            `;
+            modal.classList.remove('hidden');
+        } else {
+            // Booking Details + History overlay inside modal
+            const props = event.extendedProps;
+            const isApproved = props.status === 'approved';
+            
+            headerBg.className = isApproved 
+                ? "px-5 py-3 border-b border-slate-100 flex justify-between items-center bg-green-50 text-green-900"
+                : "px-5 py-3 border-b border-slate-100 flex justify-between items-center bg-orange-50 text-orange-900";
+                
+            titleEl.innerText = isApproved ? "Bestätigte Belegung" : "Angefragte Belegung";
+            
+            // Check history for this booking period
+            fetch(`/api/bookings/history?start_date=${props.start_display}&end_date=${props.end_display}`)
+            .then(res => res.json())
+            .then(historyData => {
+                let historyHtml = "";
+                if (historyData && historyData.length > 0) {
+                    historyHtml = `
+                        <div class="mt-4 pt-3 border-t border-slate-100">
+                            <span class="font-semibold text-slate-700 block mb-1"><i class="fa-solid fa-clock-rotate-left mr-1"></i>Historie für diesen Zeitraum:</span>
+                            <ul class="list-disc pl-4 text-slate-500 text-[11px] space-y-1">
+                    `;
+                    historyData.forEach(h => {
+                        historyHtml += `<li>Vor ${h.years_ago} Jahr(en) (${h.year}): <strong>${escapeHtml(h.guest_name)}</strong></li>`;
+                    });
+                    historyHtml += `</ul></div>`;
+                }
+                
+                let messageHtml = props.message 
+                    ? `<div class="mt-3 p-2 bg-slate-50 rounded border border-slate-100 italic text-slate-600 text-[11px]">"${props.message}"</div>` 
+                    : '';
+                    
+                contentEl.innerHTML = `
+                    <div class="space-y-2">
+                        <div class="font-bold text-slate-800 text-sm">${props.guest_name}</div>
+                        <div class="text-slate-500 text-xs space-y-1">
+                            <div><strong>Zeitraum:</strong> ${props.start_display} bis ${props.end_display}</div>
+                        </div>
+                        ${messageHtml}
+                        ${historyHtml}
+                    </div>
+                `;
+                modal.classList.remove('hidden');
+            })
+            .catch(err => {
+                console.error("Modal history fetch error:", err);
+                // Fallback display without history if it fails
+                contentEl.innerHTML = `
+                    <div class="space-y-2">
+                        <div class="font-bold text-slate-800 text-sm">${props.guest_name}</div>
+                        <div class="text-slate-500 text-xs">
+                            <div><strong>Zeitraum:</strong> ${props.start_display} bis ${props.end_display}</div>
+                        </div>
+                    </div>
+                `;
+                modal.classList.remove('hidden');
+            });
+        }
+    }
+
+    function closeModal() {
+        document.getElementById('event-modal').classList.add('hidden');
+    }
+
+    function formatDateGerman(dateObj) {
+        if (!dateObj) return "";
+        const date = new Date(dateObj);
+        return date.toLocaleDateString('de-DE', { year: 'numeric', month: '2-digit', day: '2-digit' });
+    }
+
+    // Admin Panel Actions
+    function toggleAdminPanel() {
+        const prompt = document.getElementById('admin-pin-prompt');
+        const panel = document.getElementById('admin-panel');
+        if (isAdminLoggedIn) {
+            panel.classList.toggle('hidden');
+        } else {
+            prompt.classList.toggle('hidden');
+        }
+    }
+
+    function submitAdminPIN() {
+        const pin = document.getElementById('admin-pin-input').value;
+        if (pin === '1234') {
+            isAdminLoggedIn = true;
+            adminPIN = pin;
+            sessionStorage.setItem('adminPIN', pin);
+            
+            document.getElementById('admin-pin-prompt').classList.add('hidden');
+            document.getElementById('admin-panel').classList.remove('hidden');
+            document.getElementById('admin-pin-input').value = "";
+            
+            loadAdminBookingsTable();
+        } else {
+            alert('Falsche PIN!');
+        }
+    }
+
+    function logoutAdmin() {
+        isAdminLoggedIn = false;
+        adminPIN = "";
+        sessionStorage.removeItem('adminPIN');
+        document.getElementById('admin-panel').classList.add('hidden');
+    }
+
+    function loadAdminBookingsTable() {
+        fetch('/api/bookings')
+        .then(res => res.json())
+        .then(bookings => {
+            const tbody = document.getElementById('admin-bookings-table-body');
+            tbody.innerHTML = "";
+            
+            const rawBookings = bookings.map(b => ({
+                id: b.id.replace('booking_', ''),
+                guest_name: b.extendedProps.guest_name,
+                guest_email: b.extendedProps.guest_email,
+                start_date: b.extendedProps.start_display,
+                end_date: b.extendedProps.end_display,
+                message: b.extendedProps.message,
+                status: b.extendedProps.status
+            })).sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
+            
+            if (rawBookings.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="px-4 py-4 text-center text-slate-400">Keine Belegungsdaten vorhanden.</td></tr>`;
+                return;
+            }
+            
+            rawBookings.forEach(b => {
+                const isApproved = b.status === 'approved';
+                const row = document.createElement('tr');
+                row.className = "border-b border-slate-100 hover:bg-slate-50 transition";
+                
+                row.innerHTML = `
+                    <td class="px-4 py-3 font-semibold text-slate-800">${escapeHtml(b.guest_name)}</td>
+                    <td class="px-4 py-3 text-slate-600">Anreise: ${b.start_date}<br>Abreise: ${b.end_date}</td>
+                    <td class="px-4 py-3 text-slate-400 max-w-[150px] truncate" title="${escapeHtml(b.message || '')}">${escapeHtml(b.message || '—')}</td>
+                    <td class="px-4 py-3">
+                        <span class="px-1.5 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wider ${isApproved ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800'}">
+                            ${isApproved ? 'Bestätigt' : 'Angefragt'}
+                        </span>
+                    </td>
+                    <td class="px-4 py-3 text-right space-x-1 whitespace-nowrap">
+                        ${!isApproved ? `<button onclick="approveBooking(${b.id})" class="bg-green-600 hover:bg-green-700 text-white px-2 py-0.5 rounded text-[10px] font-semibold transition">Freigeben</button>` : ''}
+                        <button onclick="deleteBooking(${b.id})" class="bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 px-2 py-0.5 rounded text-[10px] font-semibold transition">Löschen</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        });
+    }
+
+    function approveBooking(id) {
+        fetch(`/api/bookings/${id}/approve`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Admin-PIN': adminPIN }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                calendar.refetchEvents();
+                loadAdminBookingsTable();
+            } else {
+                alert("Fehler: " + data.message);
+            }
+        });
+    }
+
+    function deleteBooking(id) {
+        if (!confirm("Eintrag löschen?")) return;
+        fetch(`/api/bookings/${id}/delete`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Admin-PIN': adminPIN }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                calendar.refetchEvents();
+                loadAdminBookingsTable();
+            } else {
+                alert("Fehler: " + data.message);
+            }
+        });
+    }
+
+    // ==================== TAB 2: DEFECTS LOGIC ====================
+    function loadDefects() {
+        fetch('/api/defects')
+        .then(res => res.json())
+        .then(defects => {
+            const summary = document.getElementById('defects-summary');
+            const tbody = document.getElementById('defects-table-body');
+            tbody.innerHTML = "";
+            
+            const openCount = defects.filter(d => d.status === 'open').length;
+            summary.innerText = `${openCount} offene Mängel`;
+            
+            if (defects.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="px-4 py-6 text-center text-slate-400">Keine Mängel eingetragen.</td></tr>`;
+                return;
+            }
+            
+            defects.forEach(d => {
+                const isOpen = d.status === 'open';
+                const row = document.createElement('tr');
+                row.className = "border-b border-slate-100 hover:bg-slate-50 transition";
+                
+                // Photo cell
+                let photoHtml = '<span class="text-slate-300">—</span>';
+                if (d.image_path) {
+                    photoHtml = `
+                        <a href="${d.image_path}" target="_blank" class="block w-10 h-10 rounded border border-slate-200 overflow-hidden hover:opacity-85 transition">
+                            <img src="${d.image_path}" class="w-full h-full object-cover" alt="Defekt">
+                        </a>
+                    `;
+                }
+                
+                row.innerHTML = `
+                    <td class="px-4 py-3 font-medium text-slate-800">${escapeHtml(d.description)}</td>
+                    <td class="px-4 py-3">${photoHtml}</td>
+                    <td class="px-4 py-3 text-slate-500">${escapeHtml(d.reported_by)}<br><span class="text-[10px] text-slate-400">${d.created_at.split(' ')[0]}</span></td>
+                    <td class="px-4 py-3">
+                        <span class="px-1.5 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wider ${isOpen ? 'bg-red-100 text-red-800' : 'bg-slate-100 text-slate-500'}">
+                            ${isOpen ? 'Offen' : 'Behoben'}
+                        </span>
+                    </td>
+                    <td class="px-4 py-3 text-right whitespace-nowrap">
+                        ${isOpen ? `
+                            <button onclick="resolveDefect(${d.id})" class="bg-slate-700 hover:bg-slate-800 text-white px-2 py-1 rounded text-[10px] font-semibold transition">
+                                <i class="fa-solid fa-check mr-1"></i> Behoben
+                            </button>
+                        ` : '<span class="text-slate-400"><i class="fa-solid fa-circle-check text-green-600 mr-1"></i> Erledigt</span>'}
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        });
+    }
+
+    function submitDefect(event) {
+        event.preventDefault();
+        
+        const reported_by = document.getElementById('defect_reported_by').value;
+        const description = document.getElementById('defect_description').value;
+        const image = document.getElementById('defect_image').files[0];
+        
+        const formData = new FormData();
+        formData.append('reported_by', reported_by);
+        formData.append('description', description);
+        if (image) {
+            formData.append('image', image);
+        }
+        
+        fetch('/api/defects', {
+            method: 'POST',
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                alert("Mangel erfolgreich gemeldet!");
+                document.getElementById('defect-form').reset();
+                loadDefects();
+            } else {
+                alert("Fehler: " + data.message);
+            }
+        })
+        .catch(err => console.error("Defect report error:", err));
+    }
+
+    function resolveDefect(id) {
+        fetch(`/api/defects/${id}/resolve`, {
+            method: 'POST'
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                loadDefects();
+            } else {
+                alert("Fehler: " + data.message);
+            }
+        });
+    }
+
+    // ==================== TAB 3: EXPENSES & BELEGE LOGIC ====================
+    function loadExpenses() {
+        fetch('/api/expenses')
+        .then(res => res.json())
+        .then(expenses => {
+            const summary = document.getElementById('expenses-summary');
+            const tbody = document.getElementById('expenses-table-body');
+            tbody.innerHTML = "";
+            
+            summary.innerText = `${expenses.length} Ausgaben`;
+            
+            if (expenses.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="px-4 py-6 text-center text-slate-400">Keine Ausgaben vorhanden.</td></tr>`;
+                calculateSplit(expenses);
+                return;
+            }
+            
+            expenses.forEach(e => {
+                const row = document.createElement('tr');
+                row.className = "border-b border-slate-100 hover:bg-slate-50 transition";
+                
+                let receiptHtml = '<span class="text-slate-300">—</span>';
+                if (e.receipt_path) {
+                    const isPdf = e.receipt_path.toLowerCase().endsWith('.pdf');
+                    const iconClass = isPdf ? 'fa-regular fa-file-pdf text-red-600' : 'fa-regular fa-file-image text-blue-600';
+                    receiptHtml = `
+                        <a href="${e.receipt_path}" target="_blank" class="inline-flex items-center justify-center p-2 border border-slate-200 rounded hover:bg-slate-50 transition">
+                            <i class="${iconClass} text-base"></i>
+                        </a>
+                    `;
+                }
+                
+                row.innerHTML = `
+                    <td class="px-4 py-3 font-medium text-slate-800">${escapeHtml(e.item_description)}</td>
+                    <td class="px-4 py-3 text-right font-semibold text-slate-800">${e.amount.toFixed(2)} CHF</td>
+                    <td class="px-4 py-3 font-semibold text-slate-600">${escapeHtml(e.paid_by)}</td>
+                    <td class="px-4 py-3 text-center">${receiptHtml}</td>
+                    <td class="px-4 py-3 text-slate-400">${e.created_at.split(' ')[0]}</td>
+                    <td class="px-4 py-3 text-right">
+                        <button onclick="deleteExpense(${e.id})" class="bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 px-2 py-0.5 rounded text-[10px] font-semibold transition">
+                            Löschen
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+            
+            calculateSplit(expenses);
+        });
+    }
+
+    function submitExpense(event) {
+        event.preventDefault();
+        
+        const paid_by = document.getElementById('expense_paid_by').value;
+        const item_description = document.getElementById('expense_item').value;
+        const amount = document.getElementById('expense_amount').value;
+        const receipt = document.getElementById('expense_receipt').files[0];
+        
+        const formData = new FormData();
+        formData.append('paid_by', paid_by);
+        formData.append('item_description', item_description);
+        formData.append('amount', amount);
+        if (receipt) {
+            formData.append('receipt', receipt);
+        }
+        
+        fetch('/api/expenses', {
+            method: 'POST',
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                alert("Ausgabe erfolgreich eingetragen!");
+                document.getElementById('expense-form').reset();
+                loadExpenses();
+            } else {
+                alert("Fehler: " + data.message);
+            }
+        })
+        .catch(err => console.error("Expense post error:", err));
+    }
+
+    function deleteExpense(id) {
+        const pin = prompt("Admin-PIN eingeben zum Löschen:");
+        if (!pin) return;
+        
+        fetch(`/api/expenses/${id}/delete`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ pin })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                loadExpenses();
+            } else {
+                alert("Fehler: " + data.message);
+            }
+        });
+    }
+
+    // Expense split calculations between Chiara, Seraina and Alex Benz
+    function calculateSplit(expenses) {
+        const totalEl = document.getElementById('expenses-total-amt');
+        const shareEl = document.getElementById('expenses-share-amt');
+        const settlementEl = document.getElementById('expenses-settlement');
+        
+        if (expenses.length === 0) {
+            totalEl.innerText = "0.00 CHF";
+            shareEl.innerText = "0.00 CHF";
+            settlementEl.innerHTML = "Alles ausgeglichen.";
+            return;
+        }
+        
+        // 1. Calculate sum for each of the three family members
+        const payments = {
+            "Chiara Benz": 0,
+            "Seraina Benz": 0,
+            "Alex Benz": 0
+        };
+        
+        let total = 0;
+        expenses.forEach(e => {
+            if (payments.hasOwnProperty(e.paid_by)) {
+                payments[e.paid_by] += e.amount;
+                total += e.amount;
+            }
+        });
+        
+        totalEl.innerText = `${total.toFixed(2)} CHF`;
+        
+        // 2. Share per person
+        const share = total / 3;
+        shareEl.innerText = `${share.toFixed(2)} CHF`;
+        
+        // 3. Balance = paid - share
+        const balances = [];
+        for (const [name, paid] of Object.entries(payments)) {
+            balances.push({
+                name: name,
+                paid: paid,
+                balance: paid - share
+            });
+        }
+        
+        // 4. Calculate who owes whom
+        // Debtors are people with negative balance, Creditors have positive balance
+        let debtors = balances.filter(b => b.balance < -0.01).sort((a, b) => a.balance - b.balance); // most negative first
+        let creditors = balances.filter(b => b.balance > 0.01).sort((a, b) => b.balance - a.balance); // most positive first
+        
+        let settlements = [];
+        
+        let dIdx = 0;
+        let cIdx = 0;
+        
+        // Match debtors to creditors
+        while (dIdx < debtors.length && cIdx < creditors.length) {
+            let debtor = debtors[dIdx];
+            let creditor = creditors[cIdx];
+            
+            // Amount owed is min of debtor's debt vs creditor's credit
+            let debtVal = Math.abs(debtor.balance);
+            let creditVal = creditor.balance;
+            let transactionVal = Math.min(debtVal, creditVal);
+            
+            settlements.push(`<strong>${debtor.name.split(' ')[0]}</strong> zahlt <strong>${transactionVal.toFixed(2)} CHF</strong> an <strong>${creditor.name.split(' ')[0]}</strong>`);
+            
+            debtor.balance += transactionVal;
+            creditor.balance -= transactionVal;
+            
+            if (Math.abs(debtor.balance) < 0.01) dIdx++;
+            if (creditor.balance < 0.01) cIdx++;
+        }
+        
+        if (settlements.length === 0) {
+            settlementEl.innerHTML = "Alles ausgeglichen.";
+        } else {
+            settlementEl.innerHTML = settlements.join("<br>");
+        }
+    }
+
+    function escapeHtml(str) {
+        if (!str) return "";
+        return str
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+</script>
+{% endblock %}
