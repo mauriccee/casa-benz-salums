@@ -80,6 +80,7 @@ def init_db():
                 amount DOUBLE PRECISION NOT NULL,
                 paid_by VARCHAR(255) NOT NULL,
                 receipt_path TEXT,
+                shared_by TEXT,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         ''')
@@ -128,6 +129,7 @@ def init_db():
                 amount REAL NOT NULL,
                 paid_by TEXT NOT NULL,
                 receipt_path TEXT,
+                shared_by TEXT,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         ''')
@@ -138,6 +140,13 @@ def init_db():
             )
         ''')
     
+    # Run migration to add shared_by column to existing DB
+    try:
+        cursor.execute("ALTER TABLE expenses ADD COLUMN shared_by TEXT")
+        conn.commit()
+    except Exception:
+        pass
+        
     conn.commit()
     
     # Seed default pins if settings is empty
@@ -353,22 +362,22 @@ def resolve_defect(defect_id):
     return success
 
 # Expense tracking helpers
-def add_expense(item_description, amount, paid_by, receipt_path):
+def add_expense(item_description, amount, paid_by, receipt_path, shared_by):
     db_type = get_db_type()
     conn = get_db_connection()
     cursor = get_cursor(conn, db_type)
     
     query = '''
-        INSERT INTO expenses (item_description, amount, paid_by, receipt_path)
-        VALUES (?, ?, ?, ?)
+        INSERT INTO expenses (item_description, amount, paid_by, receipt_path, shared_by)
+        VALUES (?, ?, ?, ?, ?)
     '''
     
     if db_type == 'postgres':
         query = query.replace('?', '%s') + " RETURNING id"
-        cursor.execute(query, (item_description, amount, paid_by, receipt_path))
+        cursor.execute(query, (item_description, amount, paid_by, receipt_path, shared_by))
         expense_id = cursor.fetchone()['id']
     else:
-        cursor.execute(query, (item_description, amount, paid_by, receipt_path))
+        cursor.execute(query, (item_description, amount, paid_by, receipt_path, shared_by))
         expense_id = cursor.lastrowid
         
     conn.commit()

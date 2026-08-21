@@ -603,11 +603,15 @@ def api_expenses():
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], unique_filename))
                 receipt_path = f"/static/uploads/{unique_filename}"
                 
+        shared_by_list = request.form.getlist('shared_by')
+        shared_by = ",".join(shared_by_list) if shared_by_list else "Chiara Benz,Seraina Benz,Alex Benz"
+        
         expense_id = database.add_expense(
             item_description=item_description,
             amount=amount,
             paid_by=paid_by,
-            receipt_path=receipt_path
+            receipt_path=receipt_path,
+            shared_by=shared_by
         )
         return jsonify({'success': True, 'message': 'Ausgabe erfolgreich hinzugefügt.', 'expense_id': expense_id})
 
