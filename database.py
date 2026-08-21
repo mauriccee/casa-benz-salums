@@ -437,6 +437,7 @@ def get_setting(key, default=None):
     # Hardcoded defaults as requested by the user
     hardcoded_defaults = {
         'phone_chiara': '+41797483754',
+        'wa_apikey_chiara': '7183815',
         'phone_alex': '+41798620712',
         'wa_apikey_alex': '2161300'
     }
