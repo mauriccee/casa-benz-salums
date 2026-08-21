@@ -300,52 +300,119 @@ def send_rejection_notification(guest_name, approver_name, start_date, end_date,
     """Sends a notification email to the booking creator informing them of the rejection and the reason."""
     emails = get_family_emails()
     recipient_email = emails.get(guest_name)
-    if not recipient_email:
-        return
-        
+    
     start_swiss = format_date_swiss_py(start_date)
     end_swiss = format_date_swiss_py(end_date)
     
-    subject = f"Buchungsanfrage abgelehnt: {guest_name}"
-    body = (
-        f"Hallo {guest_name.split(' ')[0]},\n\n"
-        f"Deine Buchungsanfrage für das Ferienhaus in Laax im Zeitraum {start_swiss} bis {end_swiss} "
-        f"wurde von {approver_name} abgelehnt.\n\n"
-        f"Begründung:\n\"{reason_text}\"\n\n"
-        f"Das Buchungstool ist unter https://casa-benz-salums.ch erreichbar.\n"
-    )
-    
-    logger.info("=" * 60)
-    logger.info(f"REJECTION NOTIFICATION SENT TO: {guest_name} ({recipient_email})")
-    logger.info(f"Reason: {reason_text}")
-    logger.info("=" * 60)
-    
-    smtp_server, smtp_port, smtp_user, smtp_password = get_smtp_config()
-    if smtp_server and smtp_user and smtp_password:
-        try:
-            port = int(smtp_port) if smtp_port else 587
-        except ValueError:
-            port = 587
-            
-        msg = MIMEMultipart()
-        msg['From'] = f"Casa Benz Salums <{smtp_user}>"
-        msg['To'] = recipient_email
-        msg['Subject'] = subject
-        msg.attach(MIMEText(body, 'plain', 'utf-8'))
+    # 1. Email Rejection
+    if recipient_email:
+        subject = f"Buchungsanfrage abgelehnt: {guest_name}"
+        body = (
+            f"Hallo {guest_name.split(' ')[0]},\n\n"
+            f"Deine Buchungsanfrage für das Ferienhaus in Laax im Zeitraum {start_swiss} bis {end_swiss} "
+            f"wurde von {approver_name} abgelehnt.\n\n"
+            f"Begründung:\n\"{reason_text}\"\n\n"
+            f"Das Buchungstool ist unter https://casa-benz-salums.ch erreichbar.\n"
+        )
         
+        logger.info("=" * 60)
+        logger.info(f"REJECTION NOTIFICATION SENT TO: {guest_name} ({recipient_email})")
+        logger.info(f"Reason: {reason_text}")
+        logger.info("=" * 60)
+        
+        smtp_server, smtp_port, smtp_user, smtp_password = get_smtp_config()
+        if smtp_server and smtp_user and smtp_password:
+            try:
+                port = int(smtp_port) if smtp_port else 587
+            except ValueError:
+                port = 587
+                
+            msg = MIMEMultipart()
+            msg['From'] = f"Casa Benz Salums <{smtp_user}>"
+            msg['To'] = recipient_email
+            msg['Subject'] = subject
+            msg.attach(MIMEText(body, 'plain', 'utf-8'))
+            
+            try:
+                if port == 465:
+                    with smtplib.SMTP_SSL(smtp_server, port, timeout=10) as server:
+                        server.login(smtp_user, smtp_password)
+                        server.sendmail(smtp_user, recipient_email, msg.as_string())
+                else:
+                    with smtplib.SMTP(smtp_server, port, timeout=10) as server:
+                        server.starttls()
+                        server.login(smtp_user, smtp_password)
+                        server.sendmail(smtp_user, recipient_email, msg.as_string())
+                logger.info("Rejection email sent successfully.")
+            except Exception as e:
+                logger.error(f"Failed to send rejection SMTP email: {e}")
+
+    # 2. WhatsApp Rejection
+    phone_key = f"phone_{guest_name.split(' ')[0].lower()}"
+    apikey_key = f"wa_apikey_{guest_name.split(' ')[0].lower()}"
+    phone = database.get_setting(phone_key, '')
+    apikey = database.get_setting(apikey_key, '')
+    
+    if phone and apikey:
+        text = (
+            f"Hallo {guest_name.split(' ')[0]}!\n\n"
+            f"Deine Buchungsanfrage fuer das Ferienhaus im Zeitraum {start_swiss} bis {end_swiss} "
+            f"wurde von *{approver_name}* abgelehnt.\n\n"
+            f"Begruendung:\n\"{reason_text}\""
+        )
         try:
-            if port == 465:
-                with smtplib.SMTP_SSL(smtp_server, port, timeout=10) as server:
-                    server.login(smtp_user, smtp_password)
-                    server.sendmail(smtp_user, recipient_email, msg.as_string())
-            else:
-                with smtplib.SMTP(smtp_server, port, timeout=10) as server:
-                    server.starttls()
-                    server.login(smtp_user, smtp_password)
-                    server.sendmail(smtp_user, recipient_email, msg.as_string())
-            logger.info("Rejection email sent successfully.")
+            res = requests.get(
+                "https://api.callmebot.com/whatsapp.php",
+                params={"phone": phone, "text": text, "apikey": apikey},
+                timeout=10
+            )
+            logger.info(f"Rejection WhatsApp sent to {guest_name} (Status: {res.status_code})")
         except Exception as e:
-            logger.error(f"Failed to send rejection SMTP email: {e}")
+            logger.error(f"Failed to send rejection WhatsApp to {guest_name}: {e}")
+
+def send_whatsapp_notifications(booking_id, sender_name, start_date, end_date, message_text):
+    """Sends WhatsApp messages using CallMeBot to all family members EXCEPT the sender."""
+    emails = get_family_emails()
+    recipients = [name for name in emails.keys() if name != sender_name]
+    
+    start_swiss = format_date_swiss_py(start_date)
+    end_swiss = format_date_swiss_py(end_date)
+    
+    try:
+        base_url = request.host_url.rstrip('/')
+    except RuntimeError:
+        base_url = "https://casa-benz-salums.ch"
+        
+    for recipient_name in recipients:
+        phone_key = f"phone_{recipient_name.split(' ')[0].lower()}"
+        apikey_key = f"wa_apikey_{recipient_name.split(' ')[0].lower()}"
+        
+        phone = database.get_setting(phone_key, '')
+        apikey = database.get_setting(apikey_key, '')
+        
+        if phone and apikey:
+            recipient_first_name = recipient_name.split(' ')[0]
+            approve_url = f"{base_url}/api/bookings/email-action?action=approve&id={booking_id}&user={recipient_name}"
+            reject_url = f"{base_url}/api/bookings/email-action?action=reject_prompt&id={booking_id}&user={recipient_name}"
+            
+            text = (
+                f"Hallo {recipient_first_name}!\n\n"
+                f"*{sender_name}* hat eine Buchungsanfrage fuer das Ferienhaus eingetragen:\n"
+                f"Zeitraum: {start_swiss} bis {end_swiss}\n"
+                f"Notiz: {message_text or '—'}\n\n"
+                f"Direkt Bestaetigen:\n{approve_url}\n\n"
+                f"Direkt Ablehnen:\n{reject_url}"
+            )
+            
+            try:
+                res = requests.get(
+                    "https://api.callmebot.com/whatsapp.php",
+                    params={"phone": phone, "text": text, "apikey": apikey},
+                    timeout=10
+                )
+                logger.info(f"WhatsApp sent to {recipient_name} (Status: {res.status_code})")
+            except Exception as e:
+                logger.error(f"Failed to send WhatsApp to {recipient_name}: {e}")
 
 def check_and_auto_approve():
     """Finds pending bookings that are older than 10 days and auto-approves them."""
@@ -546,6 +613,7 @@ def api_bookings():
         )
         
         send_email_notifications(booking_id, guest_name, start_date, end_date, message)
+        send_whatsapp_notifications(booking_id, guest_name, start_date, end_date, message)
         
         return jsonify({
             'success': True,
@@ -757,7 +825,13 @@ def api_settings():
             'pin_chiara': database.get_setting('pin_chiara', '1111'),
             'pin_seraina': database.get_setting('pin_seraina', '2222'),
             'pin_alex': database.get_setting('pin_alex', '3333'),
-            'pin_admin': database.get_setting('pin_admin', '1234')
+            'pin_admin': database.get_setting('pin_admin', '1234'),
+            'phone_chiara': database.get_setting('phone_chiara', ''),
+            'wa_apikey_chiara': database.get_setting('wa_apikey_chiara', ''),
+            'phone_seraina': database.get_setting('phone_seraina', ''),
+            'wa_apikey_seraina': database.get_setting('wa_apikey_seraina', ''),
+            'phone_alex': database.get_setting('phone_alex', ''),
+            'wa_apikey_alex': database.get_setting('wa_apikey_alex', '')
         })
     else:
         data = request.json or request.form
@@ -776,6 +850,14 @@ def api_settings():
         if 'pin_seraina' in data: database.set_setting('pin_seraina', data.get('pin_seraina', '2222'))
         if 'pin_alex' in data: database.set_setting('pin_alex', data.get('pin_alex', '3333'))
         if 'pin_admin' in data: database.set_setting('pin_admin', data.get('pin_admin', '1234'))
+        
+        # WhatsApp CallMeBot Settings
+        if 'phone_chiara' in data: database.set_setting('phone_chiara', data.get('phone_chiara', ''))
+        if 'wa_apikey_chiara' in data: database.set_setting('wa_apikey_chiara', data.get('wa_apikey_chiara', ''))
+        if 'phone_seraina' in data: database.set_setting('phone_seraina', data.get('phone_seraina', ''))
+        if 'wa_apikey_seraina' in data: database.set_setting('wa_apikey_seraina', data.get('wa_apikey_seraina', ''))
+        if 'phone_alex' in data: database.set_setting('phone_alex', data.get('phone_alex', ''))
+        if 'wa_apikey_alex' in data: database.set_setting('wa_apikey_alex', data.get('wa_apikey_alex', ''))
         
         return jsonify({'success': True, 'message': 'Einstellungen gespeichert.'})
 
