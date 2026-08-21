@@ -40,10 +40,10 @@
             <!-- Horizontal Legend -->
             <div class="flex flex-wrap items-center gap-4 bg-white px-4 py-2.5 rounded-xl border border-zinc-200/50 shadow-[0_2px_8px_rgba(0,0,0,0.01)] text-[11px] font-bold text-zinc-500">
                 <span class="text-[9px] font-extrabold text-zinc-400 uppercase tracking-wider mr-1">Farblegende:</span>
-                <div class="flex items-center"><span class="w-3.5 h-3.5 bg-blue-50 border border-blue-250/60 rounded-md mr-2"></span> Schulferien</div>
-                <div class="flex items-center"><span class="w-3.5 h-3.5 bg-rose-50 border border-rose-250/60 rounded-md mr-2"></span> Feiertage</div>
-                <div class="flex items-center"><span class="w-3.5 h-3.5 bg-amber-50 border border-amber-250/60 rounded-md mr-2"></span> Angefragt</div>
-                <div class="flex items-center"><span class="w-3.5 h-3.5 bg-emerald-50 border border-emerald-250/60 rounded-md mr-2"></span> Bestätigt</div>
+                <div class="flex items-center"><span class="w-3.5 h-3.5 bg-blue-50 border border-blue-200/60 rounded-md mr-2"></span> Schulferien</div>
+                <div class="flex items-center"><span class="w-3.5 h-3.5 bg-rose-50 border border-rose-200/60 rounded-md mr-2"></span> Feiertage</div>
+                <div class="flex items-center"><span class="w-3.5 h-3.5 bg-amber-50 border border-amber-200/60 rounded-md mr-2"></span> Angefragt</div>
+                <div class="flex items-center"><span class="w-3.5 h-3.5 bg-emerald-50 border border-emerald-200/60 rounded-md mr-2"></span> Bestätigt</div>
             </div>
             
             <!-- Booking action -->
@@ -80,7 +80,7 @@
                         <!-- Body (Form) -->
                         <div class="flex-grow p-6 overflow-y-auto space-y-5">
                             <form id="booking-form" onsubmit="submitBooking(event)" class="space-y-5">
-                                <div id="booking-login-alert" class="bg-amber-50/60 border border-amber-250/30 rounded-xl p-4 text-xs text-amber-800 font-medium">
+                                <div id="booking-login-alert" class="bg-amber-50/60 border border-amber-200/30 rounded-xl p-4 text-xs text-amber-800 font-medium">
                                     <i class="fa-solid fa-circle-exclamation mr-2 text-amber-600"></i> Bitte melde dich zuerst unten in der Seitenleiste an, um Termine eintragen zu können.
                                 </div>
                                 
@@ -188,7 +188,7 @@
                             </div>
                         </div>
                         
-                        <h4 class="font-bold text-zinc-800 text-xs pt-4 border-t border-zinc-150"><i class="fa-solid fa-users mr-1.5 text-zinc-500"></i>Mitglieder-E-Mails</h4>
+                        <h4 class="font-bold text-zinc-800 text-xs pt-4 border-t border-zinc-200"><i class="fa-solid fa-users mr-1.5 text-zinc-500"></i>Mitglieder-E-Mails</h4>
                                             <label for="setting_seraina_email" class="block text-zinc-500 font-semibold mb-1">E-Mail für Seraina Benz</label>
                             <input type="email" id="setting_seraina_email" class="w-full px-3 py-1.5 border border-zinc-200 rounded-xl bg-zinc-50/40 text-xs focus:outline-none focus:ring-1 focus:ring-zinc-950 focus:border-zinc-950 font-semibold">
                         </div>
@@ -227,7 +227,7 @@
  
                         <!-- WhatsApp Configuration Form -->
                         <form id="admin-whatsapp-form" onsubmit="saveWhatsAppSettings(event)" class="space-y-4 pt-6 border-t border-zinc-200">
-                            <h4 class="font-bold text-zinc-800 text-xs flex items-center"><i class="fa-brands fa-whatsapp mr-1.5 text-emerald-650"></i>WhatsApp-Benachrichtigungen (CallMeBot)</h4>
+                            <h4 class="font-bold text-zinc-800 text-xs flex items-center"><i class="fa-brands fa-whatsapp mr-1.5 text-emerald-600"></i>WhatsApp-Benachrichtigungen (CallMeBot)</h4>
                             <p class="text-[10px] text-zinc-400 leading-normal font-medium">
                                 Um WhatsApp-Nachrichten zu erhalten, muss jedes Mitglied einmalig dem aktuellen WhatsApp-Kontakt von CallMeBot die Nachricht <code>I allow callmebot to send me messages</code> senden und den erhaltenen API-Key hier eintragen. Die jeweils aktive Nummer findest du auf <a href="https://www.callmebot.com/" target="_blank" class="underline text-emerald-600 font-bold">callmebot.com</a> (WhatsApp-Sektion).
                             </p>
@@ -272,7 +272,7 @@
                         <div class="pt-6 border-t border-zinc-200 space-y-3">
                             <h4 class="font-bold text-red-800 text-xs flex items-center"><i class="fa-solid fa-triangle-exclamation mr-1.5"></i>Datenbank bereinigen</h4>
                             <p class="text-[10px] text-zinc-400 leading-snug font-medium">Hier kannst du alle fiktiven Testdaten entfernen, um das Buchungstool mit leeren Kalenderdaten zu starten.</p>
-                            <button onclick="clearDemoData()" class="bg-red-50 hover:bg-red-105 text-red-700 border border-red-200/60 px-4 py-2.5 rounded-xl font-bold transition text-xs shadow-sm">
+                            <button onclick="clearDemoData()" class="bg-red-50 hover:bg-red-100 text-red-700 border border-red-200/60 px-4 py-2.5 rounded-xl font-bold transition text-xs shadow-sm">
                                 Alle Belegungsdaten löschen (Testdaten entfernen)
                             </button>
                         </div>           </div>
@@ -292,7 +292,7 @@
                 </h2>
                 
                 <form id="defect-form" onsubmit="submitDefect(event)" class="space-y-4" enctype="multipart/form-data">
-                    <div id="defect-login-alert" class="bg-amber-50/60 border border-amber-250/30 rounded-xl p-3 text-xs text-amber-800 font-medium">
+                    <div id="defect-login-alert" class="bg-amber-50/60 border border-amber-200/30 rounded-xl p-3 text-xs text-amber-800 font-medium">
                         <i class="fa-solid fa-circle-exclamation mr-1.5 text-amber-600"></i> Bitte melde dich oben an, um Mängel melden zu können.
                     </div>
                     
@@ -308,7 +308,7 @@
                     
                     <div class="hidden-when-logged-out">
                         <label for="defect_image" class="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider">Foto hochladen (optional)</label>
-                        <input type="file" id="defect_image" accept="image/*" class="mt-1.5 block w-full text-xs text-zinc-500 file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-zinc-100 file:text-zinc-700 hover:file:bg-zinc-250/50 file:transition">
+                        <input type="file" id="defect_image" accept="image/*" class="mt-1.5 block w-full text-xs text-zinc-500 file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-zinc-100 file:text-zinc-700 hover:file:bg-zinc-200/50 file:transition">
                     </div>
 
                     <button type="submit" id="defect-submit-btn" disabled class="w-full bg-zinc-200 text-zinc-400 cursor-not-allowed py-2.5 rounded-xl text-xs font-bold transition mt-2 shadow-sm">
@@ -365,7 +365,7 @@
                 </h2>
                 
                 <form id="expense-form" onsubmit="submitExpense(event)" class="space-y-4" enctype="multipart/form-data">
-                    <div id="expense-login-alert" class="bg-amber-50/60 border border-amber-250/30 rounded-xl p-3 text-xs text-amber-800 font-medium">
+                    <div id="expense-login-alert" class="bg-amber-50/60 border border-amber-200/30 rounded-xl p-3 text-xs text-amber-800 font-medium">
                         <i class="fa-solid fa-circle-exclamation mr-1.5 text-amber-600"></i> Bitte melde dich oben an, um Ausgaben eintragen zu können.
                     </div>
                     
@@ -386,7 +386,7 @@
                     
                     <div class="hidden-when-logged-out">
                         <label class="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider mb-2">Wer war dabei? (Aufteilen auf) *</label>
-                        <div class="flex flex-wrap gap-4 text-xs font-bold text-zinc-700 bg-zinc-50 p-3 rounded-xl border border-zinc-250/30">
+                        <div class="flex flex-wrap gap-4 text-xs font-bold text-zinc-700 bg-zinc-50 p-3 rounded-xl border border-zinc-200/30">
                             <label class="flex items-center space-x-1.5 cursor-pointer">
                                 <input type="checkbox" name="expense_shared_by" value="Chiara Benz" checked class="rounded border-zinc-300 text-zinc-900 focus:ring-zinc-950 h-4 w-4">
                                 <span>Chiara Benz</span>
@@ -404,7 +404,7 @@
                     
                     <div class="hidden-when-logged-out">
                         <label for="expense_receipt" class="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider">Beleg hochladen (Bild/PDF, optional)</label>
-                        <input type="file" id="expense_receipt" accept="image/*,application/pdf" class="mt-1.5 block w-full text-xs text-zinc-500 file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-zinc-100 file:text-zinc-700 hover:file:bg-zinc-250/50 file:transition">
+                        <input type="file" id="expense_receipt" accept="image/*,application/pdf" class="mt-1.5 block w-full text-xs text-zinc-500 file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-zinc-100 file:text-zinc-700 hover:file:bg-zinc-200/50 file:transition">
                     </div>
 
                     <button type="submit" id="expense-submit-btn" disabled class="w-full bg-zinc-200 text-zinc-400 cursor-not-allowed py-2.5 rounded-xl text-xs font-bold transition mt-2 shadow-sm">
@@ -1384,7 +1384,7 @@
                     <div class="p-5 flex-grow flex flex-col justify-between space-y-4">
                         <div class="space-y-2">
                             <div class="flex items-center justify-between">
-                                <span class="px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider ${isOpen ? 'bg-rose-50 text-rose-700 border border-rose-250/60' : 'bg-zinc-100 text-zinc-500 border border-zinc-200'}">
+                                <span class="px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider ${isOpen ? 'bg-rose-50 text-rose-700 border border-rose-200/60' : 'bg-zinc-100 text-zinc-500 border border-zinc-200'}">
                                     ${isOpen ? 'Offen' : 'Behoben'}
                                 </span>
                                 <span class="text-[10px] text-zinc-400 font-bold">${formatDateSwiss(d.created_at)}</span>
@@ -1506,9 +1506,9 @@
                         <div class="min-w-0">
                             <h4 class="font-bold text-zinc-800 text-xs truncate">${escapeHtml(e.item_description)}</h4>
                             <div class="flex flex-wrap items-center gap-x-2.5 gap-y-0.5 mt-0.5 text-[10px] text-zinc-400 font-semibold">
-                                <span class="text-zinc-500">Bezahlt von: <strong class="text-zinc-650">${escapeHtml(e.paid_by)}</strong></span>
+                                <span class="text-zinc-500">Bezahlt von: <strong class="text-zinc-700">${escapeHtml(e.paid_by)}</strong></span>
                                 <span class="w-1 h-1 rounded-full bg-zinc-300"></span>
-                                <span>Beteiligte: <strong class="text-zinc-650">${escapeHtml(sharedDisplay)}</strong></span>
+                                <span>Beteiligte: <strong class="text-zinc-700">${escapeHtml(sharedDisplay)}</strong></span>
                                 <span class="w-1 h-1 rounded-full bg-zinc-300"></span>
                                 <span>${formatDateSwiss(e.created_at)}</span>
                             </div>

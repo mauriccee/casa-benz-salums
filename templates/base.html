@@ -77,10 +77,10 @@
             <button onclick="switchTab('calendar-tab')" id="btn-calendar-tab" class="w-full flex items-center px-4 py-2.5 rounded-xl text-xs font-bold transition text-white bg-zinc-800 shadow-sm border border-zinc-700/50">
                 <i class="fa-solid fa-calendar-days mr-3 text-zinc-400"></i> Belegungsplan
             </button>
-            <button onclick="switchTab('defects-tab')" id="btn-defects-tab" class="w-full flex items-center px-4 py-2.5 rounded-xl text-xs font-bold transition text-zinc-450 hover:text-white hover:bg-zinc-800/40">
+            <button onclick="switchTab('defects-tab')" id="btn-defects-tab" class="w-full flex items-center px-4 py-2.5 rounded-xl text-xs font-bold transition text-zinc-400 hover:text-white hover:bg-zinc-800/40">
                 <i class="fa-solid fa-screwdriver-wrench mr-3 text-zinc-500"></i> Mängelliste
             </button>
-            <button onclick="switchTab('expenses-tab')" id="btn-expenses-tab" class="w-full flex items-center px-4 py-2.5 rounded-xl text-xs font-bold transition text-zinc-450 hover:text-white hover:bg-zinc-800/40">
+            <button onclick="switchTab('expenses-tab')" id="btn-expenses-tab" class="w-full flex items-center px-4 py-2.5 rounded-xl text-xs font-bold transition text-zinc-400 hover:text-white hover:bg-zinc-800/40">
                 <i class="fa-solid fa-file-invoice-dollar mr-3 text-zinc-500"></i> Ausgaben & Belege
             </button>
         </nav>
@@ -90,7 +90,7 @@
             <!-- Logged out view -->
             <div id="logged-out-view" class="space-y-2">
                 <div class="text-[9px] uppercase font-bold text-zinc-500 tracking-wider">Meld dich an:</div>
-                <select id="login_user" class="w-full px-2.5 py-1.5 border border-zinc-850 bg-zinc-800 rounded-lg text-[11px] text-zinc-200 focus:outline-none focus:ring-1 focus:ring-emerald-500 font-medium">
+                <select id="login_user" class="w-full px-2.5 py-1.5 border border-zinc-800 bg-zinc-800 rounded-lg text-[11px] text-zinc-200 focus:outline-none focus:ring-1 focus:ring-emerald-500 font-medium">
                     <option value="" disabled selected>Mitglied...</option>
                     <option value="Chiara Benz">Chiara Benz</option>
                     <option value="Seraina Benz">Seraina Benz</option>
@@ -98,7 +98,7 @@
                     <option value="Admin">Admin (Master)</option>
                 </select>
                 <div class="flex space-x-2">
-                    <input type="password" id="login_pin" class="w-20 px-2.5 py-1.5 border border-zinc-850 bg-zinc-800 rounded-lg text-center tracking-widest text-[11px] text-zinc-200 focus:outline-none focus:ring-1 focus:ring-emerald-500" placeholder="PIN">
+                    <input type="password" id="login_pin" class="w-20 px-2.5 py-1.5 border border-zinc-800 bg-zinc-800 rounded-lg text-center tracking-widest text-[11px] text-zinc-200 focus:outline-none focus:ring-1 focus:ring-emerald-500" placeholder="PIN">
                     <button onclick="performLogin()" class="flex-grow bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold transition text-[11px] py-1.5">Go</button>
                 </div>
             </div>
@@ -133,7 +133,7 @@
                 </div>
             </div>
             
-            <div class="text-xs font-semibold text-zinc-400 flex items-center space-x-2 bg-zinc-850 md:bg-zinc-50 border border-zinc-800 md:border-zinc-200/50 px-2.5 py-1 rounded-md">
+            <div class="text-xs font-semibold text-zinc-400 flex items-center space-x-2 bg-zinc-800 md:bg-zinc-50 border border-zinc-800 md:border-zinc-200/50 px-2.5 py-1 rounded-md">
                 <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                 <span class="text-zinc-300 md:text-zinc-500">Familien-Portal</span>
             </div>
