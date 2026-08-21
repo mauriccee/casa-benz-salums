@@ -433,6 +433,15 @@ def get_setting(key, default=None):
     
     if row:
         return row['value']
+        
+    # Hardcoded defaults as requested by the user
+    hardcoded_defaults = {
+        'phone_chiara': '+41797483754',
+        'phone_alex': '+41798620712'
+    }
+    if key in hardcoded_defaults:
+        return hardcoded_defaults[key]
+        
     return default
 
 def set_setting(key, value):
