@@ -3,59 +3,7 @@
 {% block title %}Ferienhaus Laax – Belegungsplan & Nebenkosten{% endblock %}
 
 {% block content %}
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    
-    <!-- Modern Header Banner with Sleek Login Pill -->
-    <div class="bg-white rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.02)] border border-zinc-200/50 p-6 mb-8 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
-        <div>
-            <h1 class="text-xl font-extrabold text-zinc-900 tracking-tight sm:text-2xl">Familien-Portal – Via pendas 27</h1>
-            <p class="text-xs text-zinc-400 mt-1 font-medium">
-                Internes Tool zur Belegungsabstimmung, Mängelverwaltung und Nebenkostenabrechnung.
-            </p>
-        </div>
-        
-        <!-- Elegant Login Pill -->
-        <div id="login-section" class="bg-zinc-50/80 p-3.5 rounded-xl border border-zinc-200/40 text-xs w-full lg:w-auto shadow-[inset_0_1px_2px_rgba(0,0,0,0.01)]">
-            <div id="logged-out-view" class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-                <span class="font-bold text-zinc-500 self-center text-[11px] uppercase tracking-wider">Login erforderlich:</span>
-                <select id="login_user" class="px-2.5 py-1.5 border border-zinc-200 rounded-lg bg-white text-xs text-zinc-700 focus:outline-none focus:ring-1 focus:ring-zinc-950 font-medium">
-                    <option value="" disabled selected>Mitglied auswählen...</option>
-                    <option value="Chiara Benz">Chiara Benz</option>
-                    <option value="Seraina Benz">Seraina Benz</option>
-                    <option value="Alex Benz">Alex Benz</option>
-                    <option value="Admin">Admin (Master)</option>
-                </select>
-                <input type="password" id="login_pin" class="px-2.5 py-1.5 border border-zinc-200 rounded-lg text-xs w-24 sm:w-20 text-center tracking-widest focus:outline-none focus:ring-1 focus:ring-zinc-950 bg-white" placeholder="PIN">
-                <button onclick="performLogin()" class="bg-zinc-900 hover:bg-zinc-800 text-white px-4 py-1.5 rounded-lg font-semibold transition text-xs shadow-sm">Anmelden</button>
-            </div>
-            
-            <div id="logged-in-view" class="hidden flex items-center justify-between gap-6">
-                <div class="flex items-center space-x-2">
-                    <span class="text-zinc-400">Angemeldet als:</span>
-                    <strong id="user-badge-name" class="text-zinc-900 font-bold">Gast</strong>
-                    <span id="user-badge-role" class="px-2 py-0.5 rounded-full bg-zinc-200 text-zinc-600 font-bold text-[9px] uppercase tracking-wider">Mitglied</span>
-                </div>
-                <button onclick="performLogout()" class="text-red-600 hover:text-red-700 font-bold border border-red-200/60 hover:bg-red-50/50 px-2.5 py-1 rounded-lg transition text-[11px] bg-white shadow-sm">
-                    <i class="fa-solid fa-right-from-bracket mr-1"></i> Abmelden
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modern Minimalist Segmented Navigation Tabs -->
-    <div class="flex justify-between items-center mb-8">
-        <div class="flex bg-zinc-100 p-1 rounded-xl border border-zinc-200/30 text-xs shadow-[inset_0_1px_2px_rgba(0,0,0,0.02)]">
-            <button onclick="switchTab('calendar-tab')" id="btn-calendar-tab" class="px-4 py-2 font-bold rounded-lg bg-white text-zinc-900 shadow-sm border border-zinc-200/50 transition">
-                <i class="fa-solid fa-calendar-days mr-1.5 text-zinc-500"></i> Belegungsplan
-            </button>
-            <button onclick="switchTab('defects-tab')" id="btn-defects-tab" class="px-4 py-2 font-bold rounded-lg text-zinc-500 hover:text-zinc-900 transition">
-                <i class="fa-solid fa-screwdriver-wrench mr-1.5 text-zinc-400"></i> Mängelliste
-            </button>
-            <button onclick="switchTab('expenses-tab')" id="btn-expenses-tab" class="px-4 py-2 font-bold rounded-lg text-zinc-500 hover:text-zinc-900 transition">
-                <i class="fa-solid fa-file-invoice-dollar mr-1.5 text-zinc-400"></i> Ausgaben & Belege
-            </button>
-        </div>
-    </div>
+<div class="max-w-7xl mx-auto py-2">
 
     <!-- ==================== TAB 1: CALENDAR & BOOKING ==================== -->
     <div id="calendar-tab" class="tab-content space-y-6">
@@ -87,69 +35,93 @@
             </p>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Page Actions and Legend Header -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 select-none">
+            <!-- Horizontal Legend -->
+            <div class="flex flex-wrap items-center gap-4 bg-white px-4 py-2.5 rounded-xl border border-zinc-200/50 shadow-[0_2px_8px_rgba(0,0,0,0.01)] text-[11px] font-bold text-zinc-500">
+                <span class="text-[9px] font-extrabold text-zinc-400 uppercase tracking-wider mr-1">Farblegende:</span>
+                <div class="flex items-center"><span class="w-3.5 h-3.5 bg-blue-50 border border-blue-250/60 rounded-md mr-2"></span> Schulferien</div>
+                <div class="flex items-center"><span class="w-3.5 h-3.5 bg-rose-50 border border-rose-250/60 rounded-md mr-2"></span> Feiertage</div>
+                <div class="flex items-center"><span class="w-3.5 h-3.5 bg-amber-50 border border-amber-250/60 rounded-md mr-2"></span> Angefragt</div>
+                <div class="flex items-center"><span class="w-3.5 h-3.5 bg-emerald-50 border border-emerald-250/60 rounded-md mr-2"></span> Bestätigt</div>
+            </div>
             
-            <!-- Left: Booking Form -->
-            <div class="space-y-6">
-                <!-- Sleek Booking Card -->
-                <div class="bg-white rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.02)] border border-zinc-200/50 p-6">
-                    <h2 class="text-sm font-bold text-zinc-800 border-b border-zinc-100 pb-3 mb-4 flex items-center">
-                        <i class="fa-regular fa-calendar-plus mr-2 text-zinc-500"></i>Termin eintragen
-                    </h2>
-                    
-                    <form id="booking-form" onsubmit="submitBooking(event)" class="space-y-4">
-                        <div id="booking-login-alert" class="bg-amber-50/60 border border-amber-250/30 rounded-xl p-3 text-xs text-amber-800 font-medium">
-                            <i class="fa-solid fa-circle-exclamation mr-1.5 text-amber-600"></i> Bitte melde dich oben an, um Termine eintragen zu können.
+            <!-- Booking action -->
+            <div>
+                <button onclick="openBookingDrawer()" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold px-5 py-2.5 rounded-xl text-xs transition shadow-md shadow-emerald-950/10 flex items-center justify-center">
+                    <i class="fa-solid fa-plus mr-2"></i> Termin reservieren
+                </button>
+            </div>
+        </div>
+
+        <!-- Full-Width Calendar Wrapper -->
+        <div class="bg-white rounded-2xl shadow-[0_4px_25px_rgba(0,0,0,0.015)] border border-zinc-200/55 p-4 sm:p-6">
+            <div id="calendar" class="min-h-[580px]"></div>
+        </div>
+
+        <!-- Booking Drawer Slide-over Panel -->
+        <div id="booking-drawer" class="hidden fixed inset-0 z-50 overflow-hidden select-none">
+            <!-- Backdrop -->
+            <div onclick="closeBookingDrawer()" class="absolute inset-0 bg-zinc-950/40 backdrop-blur-sm transition-opacity"></div>
+            
+            <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
+                <div class="pointer-events-auto w-screen max-w-md transform transition duration-500 ease-in-out">
+                    <div class="flex h-full flex-col bg-white shadow-2xl border-l border-zinc-200/50">
+                        <!-- Header -->
+                        <div class="bg-zinc-950 px-6 py-5 flex justify-between items-center text-white">
+                            <h2 class="text-xs font-bold uppercase tracking-wider flex items-center">
+                                <i class="fa-regular fa-calendar-plus mr-2.5 text-emerald-500"></i>Termin reservieren
+                            </h2>
+                            <button onclick="closeBookingDrawer()" class="text-zinc-400 hover:text-white transition">
+                                <i class="fa-solid fa-xmark text-lg"></i>
+                            </button>
                         </div>
                         
-                        <div class="hidden-when-logged-out">
-                            <label class="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider">Mitglied</label>
-                            <input type="text" id="booking_guest_display" disabled class="mt-1.5 block w-full px-3 py-2 border border-zinc-200 bg-zinc-50 rounded-xl text-xs text-zinc-700 font-bold">
-                        </div>
-                        
-                        <div class="hidden-when-logged-out grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label for="start_date" class="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider">Anreise *</label>
-                                <input type="date" id="start_date" required oninput="onBookingDatesInput()" class="mt-1.5 block w-full px-3 py-2 border border-zinc-200 rounded-xl shadow-sm focus:outline-none focus:ring-1 focus:ring-zinc-950 focus:border-zinc-950 text-xs bg-zinc-50/50 font-medium">
-                            </div>
-                            <div>
-                                <label for="end_date" class="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider">Abreise *</label>
-                                <input type="date" id="end_date" required oninput="onBookingDatesInput()" class="mt-1.5 block w-full px-3 py-2 border border-zinc-200 rounded-xl shadow-sm focus:outline-none focus:ring-1 focus:ring-zinc-950 focus:border-zinc-950 text-xs bg-zinc-50/50 font-medium">
-                            </div>
-                        </div>
+                        <!-- Body (Form) -->
+                        <div class="flex-grow p-6 overflow-y-auto space-y-5">
+                            <form id="booking-form" onsubmit="submitBooking(event)" class="space-y-5">
+                                <div id="booking-login-alert" class="bg-amber-50/60 border border-amber-250/30 rounded-xl p-4 text-xs text-amber-800 font-medium">
+                                    <i class="fa-solid fa-circle-exclamation mr-2 text-amber-600"></i> Bitte melde dich zuerst unten in der Seitenleiste an, um Termine eintragen zu können.
+                                </div>
+                                
+                                <div class="hidden-when-logged-out space-y-4">
+                                    <div>
+                                        <label class="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider">Mitglied</label>
+                                        <input type="text" id="booking_guest_display" disabled class="mt-1.5 block w-full px-3 py-2 border border-zinc-200 bg-zinc-50 rounded-xl text-xs text-zinc-700 font-bold">
+                                    </div>
+                                    
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label for="start_date" class="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider">Anreise *</label>
+                                            <input type="date" id="start_date" required oninput="onBookingDatesInput()" class="mt-1.5 block w-full px-3 py-2.5 border border-zinc-200 rounded-xl shadow-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 text-xs bg-zinc-50/50 font-semibold">
+                                        </div>
+                                        <div>
+                                            <label for="end_date" class="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider">Abreise *</label>
+                                            <input type="date" id="end_date" required oninput="onBookingDatesInput()" class="mt-1.5 block w-full px-3 py-2.5 border border-zinc-200 rounded-xl shadow-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 text-xs bg-zinc-50/50 font-semibold">
+                                        </div>
+                                    </div>
 
-                        <!-- Historical Overlay Banner in Form -->
-                        <div id="historical-form-alert" class="hidden bg-zinc-50 border border-zinc-200/60 rounded-xl p-3 text-xs text-zinc-500">
-                            <h4 class="font-bold text-zinc-700 mb-1 flex items-center"><i class="fa-solid fa-clock-rotate-left mr-1.5 text-zinc-400"></i> Historischer Rückblick:</h4>
-                            <ul id="historical-form-list" class="list-disc pl-4 space-y-1 font-medium"></ul>
+                                    <!-- Historical Overlay Banner in Form -->
+                                    <div id="historical-form-alert" class="hidden bg-zinc-50 border border-zinc-200/60 rounded-xl p-3.5 text-xs text-zinc-500 space-y-1">
+                                        <h4 class="font-bold text-zinc-700 flex items-center"><i class="fa-solid fa-clock-rotate-left mr-1.5 text-zinc-400"></i> Historischer Rückblick:</h4>
+                                        <ul id="historical-form-list" class="list-disc pl-4 space-y-1 font-medium"></ul>
+                                    </div>
+
+                                    <div>
+                                        <label for="message" class="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider">Notiz (optional)</label>
+                                        <textarea id="message" rows="3" class="mt-1.5 block w-full px-3 py-2.5 border border-zinc-200 rounded-xl shadow-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 text-xs bg-zinc-50/50 font-medium" placeholder="z.B. Wanderwoche, Familienwochenende etc."></textarea>
+                                    </div>
+                                </div>
+                                
+                                <!-- Drawer Actions -->
+                                <div class="pt-4 border-t border-zinc-100 flex space-x-3">
+                                    <button type="button" onclick="closeBookingDrawer()" class="flex-1 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 font-bold py-2.5 rounded-xl text-xs transition border border-zinc-200/50">Abbrechen</button>
+                                    <button type="submit" id="booking-submit-btn" disabled class="flex-1 bg-zinc-200 text-zinc-400 cursor-not-allowed py-2.5 rounded-xl text-xs font-bold transition">Reservieren</button>
+                                </div>
+                            </form>
                         </div>
-
-                        <div class="hidden-when-logged-out">
-                            <label for="message" class="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider">Notiz (optional)</label>
-                            <textarea id="message" rows="2" class="mt-1.5 block w-full px-3 py-2 border border-zinc-200 rounded-xl shadow-sm focus:outline-none focus:ring-1 focus:ring-zinc-950 focus:border-zinc-950 text-xs bg-zinc-50/50 font-medium" placeholder="z.B. Wanderwoche, Familienwochenende etc."></textarea>
-                        </div>
-
-                        <button type="submit" id="booking-submit-btn" disabled class="w-full bg-zinc-200 text-zinc-400 cursor-not-allowed py-2.5 rounded-xl text-xs font-bold transition mt-2 shadow-sm">
-                            Termin reservieren
-                        </button>
-                    </form>
-                </div>
-
-                <!-- Modern Calendar Legend -->
-                <div class="bg-white rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.02)] border border-zinc-200/50 p-5 space-y-4">
-                    <h3 class="text-[11px] font-bold text-zinc-400 uppercase tracking-wider">Farblegende</h3>
-                    <div class="grid grid-cols-2 gap-3 text-xs font-semibold text-zinc-600">
-                        <div class="flex items-center"><span class="w-3.5 h-3.5 bg-blue-50 border border-blue-200 rounded-md mr-2.5"></span> Schulferien</div>
-                        <div class="flex items-center"><span class="w-3.5 h-3.5 bg-rose-50 border border-rose-200 rounded-md mr-2.5"></span> Feiertage</div>
-                        <div class="flex items-center"><span class="w-3.5 h-3.5 bg-amber-50 border border-amber-250/60 rounded-md mr-2.5"></span> Angefragt</div>
-                        <div class="flex items-center"><span class="w-3.5 h-3.5 bg-emerald-50 border border-emerald-250/60 rounded-md mr-2.5"></span> Bestätigt</div>
                     </div>
                 </div>
-            </div>
-
-            <!-- Right: Calendar -->
-            <div class="lg:col-span-2 bg-white rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.02)] border border-zinc-200/50 p-4 sm:p-6">
-                <div id="calendar" class="min-h-[500px]"></div>
             </div>
         </div>
         
@@ -345,27 +317,15 @@
                 </form>
             </div>
 
-            <!-- Right: Defects List Table -->
-            <div class="lg:col-span-2 bg-white rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.02)] border border-zinc-200/50 overflow-hidden">
-                <div class="px-6 py-4 border-b border-zinc-100 flex justify-between items-center bg-white">
-                    <h2 class="text-sm font-bold text-zinc-800">Mängelliste</h2>
-                    <span class="text-xs text-zinc-400 font-semibold" id="defects-summary">Lade Mängel...</span>
+            <!-- Right: Defects List Table replaced with Card Grid -->
+            <div class="lg:col-span-2 space-y-4">
+                <div class="flex justify-between items-center bg-transparent py-1 select-none">
+                    <h3 class="text-xs font-bold text-zinc-400 uppercase tracking-wider">Aktive Einträge</h3>
+                    <span class="text-xs text-zinc-400 font-bold uppercase tracking-wider" id="defects-summary">Lade Mängel...</span>
                 </div>
-                <div class="overflow-x-auto text-xs">
-                    <table class="w-full text-left text-zinc-500">
-                        <thead class="bg-zinc-50/80 border-b border-zinc-100 uppercase tracking-wider text-zinc-400 font-bold text-[10px]">
-                            <tr>
-                                <th class="px-4 py-3">Mangel / Beschreibung</th>
-                                <th class="px-4 py-3">Foto</th>
-                                <th class="px-4 py-3">Gemeldet von</th>
-                                <th class="px-4 py-3">Status</th>
-                                <th class="px-4 py-3 text-right">Aktionen</th>
-                            </tr>
-                        </thead>
-                        <tbody id="defects-table-body" class="divide-y divide-zinc-100">
-                            <!-- Populated dynamically -->
-                        </tbody>
-                    </table>
+                
+                <div id="defects-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <!-- Populated dynamically -->
                 </div>
             </div>
         </div>
@@ -453,29 +413,14 @@
                 </form>
             </div>
 
-            <!-- Right: Expenses List Table -->
-            <div class="lg:col-span-2 bg-white rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.02)] border border-zinc-200/50 overflow-hidden">
-                <div class="px-6 py-4 border-b border-zinc-100 flex justify-between items-center bg-white">
-                    <h2 class="text-sm font-bold text-zinc-800">Ausgabenliste</h2>
-                    <span class="text-xs text-zinc-400 font-semibold" id="expenses-summary">Lade Ausgaben...</span>
+            <!-- Right: Expenses List Container -->
+            <div class="lg:col-span-2 space-y-4">
+                <div class="flex justify-between items-center bg-transparent py-1 select-none">
+                    <h3 class="text-xs font-bold text-zinc-400 uppercase tracking-wider">Ausgabenliste</h3>
+                    <span class="text-xs text-zinc-400 font-bold uppercase tracking-wider" id="expenses-summary">Lade Ausgaben...</span>
                 </div>
-                <div class="overflow-x-auto text-xs">
-                    <table class="w-full text-left text-zinc-500">
-                        <thead class="bg-zinc-50/80 border-b border-zinc-100 uppercase tracking-wider text-zinc-400 font-bold text-[10px]">
-                            <tr>
-                                <th class="px-4 py-3">Gegenstand / Zweck</th>
-                                <th class="px-4 py-3 text-right">Betrag</th>
-                                <th class="px-4 py-3">Bezahlt von</th>
-                                <th class="px-4 py-3">Beteiligte</th>
-                                <th class="px-4 py-3 text-center">Beleg</th>
-                                <th class="px-4 py-3">Datum</th>
-                                <th class="px-4 py-3 text-right">Aktionen</th>
-                            </tr>
-                        </thead>
-                        <tbody id="expenses-table-body" class="divide-y divide-zinc-100">
-                            <!-- Populated dynamically -->
-                        </tbody>
-                    </table>
+                <div id="expenses-list" class="space-y-3">
+                    <!-- Populated dynamically -->
                 </div>
             </div>
         </div>
@@ -514,6 +459,15 @@
         document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
         document.getElementById(tabId).classList.remove('hidden');
         
+        const pageTitles = {
+            'calendar-tab': 'Belegungsplan',
+            'defects-tab': 'Mängelliste',
+            'expenses-tab': 'Ausgaben & Belege'
+        };
+        if (pageTitles[tabId]) {
+            document.getElementById('page-title').innerText = pageTitles[tabId];
+        }
+        
         const buttons = {
             'calendar-tab': 'btn-calendar-tab',
             'defects-tab': 'btn-defects-tab',
@@ -523,10 +477,18 @@
         for (const [key, btnId] of Object.entries(buttons)) {
             const btn = document.getElementById(btnId);
             if (key === tabId) {
-                btn.className = "px-4 py-2 font-bold rounded-lg bg-white text-zinc-900 shadow-sm border border-zinc-200/50 transition";
+                btn.className = "w-full flex items-center px-4 py-2.5 rounded-xl text-xs font-bold transition text-white bg-zinc-800 shadow-sm border border-zinc-700/50";
             } else {
-                btn.className = "px-4 py-2 font-bold rounded-lg text-zinc-500 hover:text-zinc-900 transition";
+                btn.className = "w-full flex items-center px-4 py-2.5 rounded-xl text-xs font-bold transition text-zinc-400 hover:text-white hover:bg-zinc-800/40";
             }
+        }
+        
+        // Auto-close mobile sidebar drawer
+        const sidebar = document.getElementById('sidebar');
+        const backdrop = document.getElementById('sidebar-backdrop');
+        if (sidebar && !sidebar.classList.contains('-translate-x-full') && window.innerWidth < 768) {
+            sidebar.classList.add('-translate-x-full');
+            backdrop.classList.add('hidden');
         }
         
         if (tabId === 'calendar-tab') {
@@ -537,6 +499,14 @@
         } else if (tabId === 'expenses-tab') {
             loadExpenses();
         }
+    }
+
+    function openBookingDrawer() {
+        document.getElementById('booking-drawer').classList.remove('hidden');
+    }
+
+    function closeBookingDrawer() {
+        document.getElementById('booking-drawer').classList.add('hidden');
     }
 
     document.addEventListener('DOMContentLoaded', function() {
@@ -680,6 +650,12 @@
         document.getElementById('user-badge-name').innerText = loggedInUser;
         document.getElementById('user-badge-role').innerText = (userRole === 'admin') ? 'Admin' : 'Mitglied';
         
+        if (loggedInUser) {
+            const parts = loggedInUser.split(' ');
+            const initials = parts.length > 1 ? parts[0][0] + parts[1][0] : parts[0][0];
+            document.getElementById('user-badge-initials').innerText = initials.toUpperCase();
+        }
+        
         // Show/hide forms content depending on login
         document.querySelectorAll('.hidden-when-logged-out').forEach(el => el.classList.remove('hidden'));
         document.getElementById('booking-login-alert').classList.add('hidden');
@@ -693,13 +669,13 @@
         
         // Enable buttons
         document.getElementById('booking-submit-btn').disabled = false;
-        document.getElementById('booking-submit-btn').className = "w-full bg-slate-800 hover:bg-slate-900 text-white py-2.5 rounded text-sm font-semibold transition mt-2 shadow-sm cursor-pointer";
+        document.getElementById('booking-submit-btn').className = "w-full bg-zinc-900 hover:bg-zinc-800 text-white py-2.5 rounded-xl text-xs font-bold transition mt-2 shadow-sm cursor-pointer";
         
         document.getElementById('defect-submit-btn').disabled = false;
-        document.getElementById('defect-submit-btn').className = "w-full bg-slate-800 hover:bg-slate-900 text-white py-2.5 rounded text-sm font-semibold transition shadow-sm cursor-pointer";
+        document.getElementById('defect-submit-btn').className = "w-full bg-zinc-900 hover:bg-zinc-800 text-white py-2.5 rounded-xl text-xs font-bold transition mt-2 shadow-sm cursor-pointer";
         
         document.getElementById('expense-submit-btn').disabled = false;
-        document.getElementById('expense-submit-btn').className = "w-full bg-slate-800 hover:bg-slate-900 text-white py-2.5 rounded text-sm font-semibold transition shadow-sm cursor-pointer";
+        document.getElementById('expense-submit-btn').className = "w-full bg-zinc-900 hover:bg-zinc-800 text-white py-2.5 rounded-xl text-xs font-bold transition mt-2 shadow-sm cursor-pointer";
         
         // Show Admin dashboard only if logged in as Admin
         if (userRole === 'admin') {
@@ -723,6 +699,7 @@
         
         document.getElementById('login_user').value = "";
         document.getElementById('login_pin').value = "";
+        document.getElementById('user-badge-initials').innerText = "G";
         
         // Hide forms content
         document.querySelectorAll('.hidden-when-logged-out').forEach(el => el.classList.add('hidden'));
@@ -732,13 +709,13 @@
         
         // Disable buttons
         document.getElementById('booking-submit-btn').disabled = true;
-        document.getElementById('booking-submit-btn').className = "w-full bg-slate-400 text-slate-200 cursor-not-allowed py-2.5 rounded text-sm font-semibold transition mt-2 shadow-sm";
+        document.getElementById('booking-submit-btn').className = "w-full bg-zinc-200 text-zinc-400 cursor-not-allowed py-2.5 rounded-xl text-xs font-bold transition mt-2 shadow-sm";
         
         document.getElementById('defect-submit-btn').disabled = true;
-        document.getElementById('defect-submit-btn').className = "w-full bg-slate-400 text-slate-200 cursor-not-allowed py-2.5 rounded text-sm font-semibold transition shadow-sm";
+        document.getElementById('defect-submit-btn').className = "w-full bg-zinc-200 text-zinc-400 cursor-not-allowed py-2.5 rounded-xl text-xs font-bold transition mt-2 shadow-sm";
         
         document.getElementById('expense-submit-btn').disabled = true;
-        document.getElementById('expense-submit-btn').className = "w-full bg-slate-400 text-slate-200 cursor-not-allowed py-2.5 rounded text-sm font-semibold transition shadow-sm";
+        document.getElementById('expense-submit-btn').className = "w-full bg-zinc-200 text-zinc-400 cursor-not-allowed py-2.5 rounded-xl text-xs font-bold transition mt-2 shadow-sm";
         
         // Hide Admin Dashboard
         document.getElementById('admin-panel').classList.add('hidden');
@@ -808,11 +785,12 @@
                 message
             })
         })
-        .then(response => response.json())
+        .then(res => res.json())
         .then(data => {
             if (data.success) {
-                alert("Buchung erfolgreich eingetragen! Eine Benachrichtigung wurde versendet.");
+                alert('Buchung erfolgreich angefragt!');
                 document.getElementById('booking-form').reset();
+                closeBookingDrawer();
                 if (startPicker) startPicker.clear();
                 if (endPicker) endPicker.clear();
                 document.getElementById('historical-form-alert').classList.add('hidden');
@@ -1366,49 +1344,70 @@
         .then(res => res.json())
         .then(defects => {
             const summary = document.getElementById('defects-summary');
-            const tbody = document.getElementById('defects-table-body');
-            tbody.innerHTML = "";
+            const grid = document.getElementById('defects-grid');
+            grid.innerHTML = "";
             
             const openCount = defects.filter(d => d.status === 'open').length;
             summary.innerText = `${openCount} offene Mängel`;
             
             if (defects.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="px-4 py-6 text-center text-slate-400">Keine Mängel eingetragen.</td></tr>`;
+                grid.innerHTML = `<div class="col-span-full py-8 text-center text-zinc-400 font-semibold text-xs bg-white rounded-2xl border border-zinc-200/50">Keine Mängel eingetragen.</div>`;
                 return;
             }
             
             defects.forEach(d => {
                 const isOpen = d.status === 'open';
-                const row = document.createElement('tr');
-                row.className = "border-b border-slate-100 hover:bg-slate-50 transition";
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.015)] border border-zinc-200/50 overflow-hidden flex flex-col justify-between hover:shadow-[0_8px_30px_rgba(0,0,0,0.03)] transition duration-300";
                 
-                let photoHtml = '<span class="text-slate-300">—</span>';
+                let photoHtml = '';
                 if (d.image_path) {
                     photoHtml = `
-                        <a href="${d.image_path}" target="_blank" class="block w-10 h-10 rounded border border-slate-200 overflow-hidden hover:opacity-85 transition">
-                            <img src="${d.image_path}" class="w-full h-full object-cover" alt="Defekt">
-                        </a>
+                        <div class="h-44 overflow-hidden relative group">
+                            <img src="${d.image_path}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" alt="Defekt">
+                            <a href="${d.image_path}" target="_blank" class="absolute inset-0 bg-black/35 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white transition duration-300">
+                                <i class="fa-solid fa-magnifying-glass-plus text-base"></i>
+                            </a>
+                        </div>
+                    `;
+                } else {
+                    photoHtml = `
+                        <div class="h-32 bg-zinc-50 border-b border-zinc-100 flex flex-col items-center justify-center text-zinc-400">
+                            <i class="fa-solid fa-circle-exclamation text-2xl mb-1.5 text-zinc-300"></i>
+                            <span class="text-[9px] uppercase font-bold tracking-wider">Kein Foto vorhanden</span>
+                        </div>
                     `;
                 }
                 
-                row.innerHTML = `
-                    <td class="px-4 py-3 font-medium text-slate-800">${escapeHtml(d.description)}</td>
-                    <td class="px-4 py-3">${photoHtml}</td>
-                    <td class="px-4 py-3 text-slate-500">${escapeHtml(d.reported_by)}<br><span class="text-[10px] text-slate-400">${formatDateSwiss(d.created_at)}</span></td>
-                    <td class="px-4 py-3">
-                        <span class="px-1.5 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wider ${isOpen ? 'bg-red-100 text-red-800' : 'bg-slate-100 text-slate-500'}">
-                            ${isOpen ? 'Offen' : 'Behoben'}
-                        </span>
-                    </td>
-                    <td class="px-4 py-3 text-right whitespace-nowrap">
-                        ${isOpen ? `
-                            <button onclick="resolveDefect(${d.id})" class="bg-slate-700 hover:bg-slate-800 text-white px-2 py-1 rounded text-[10px] font-semibold transition">
-                                <i class="fa-solid fa-check mr-1"></i> Behoben
-                            </button>
-                        ` : '<span class="text-slate-400"><i class="fa-solid fa-circle-check text-green-600 mr-1"></i> Erledigt</span>'}
-                    </td>
+                card.innerHTML = `
+                    ${photoHtml}
+                    <div class="p-5 flex-grow flex flex-col justify-between space-y-4">
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between">
+                                <span class="px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider ${isOpen ? 'bg-rose-50 text-rose-700 border border-rose-250/60' : 'bg-zinc-100 text-zinc-500 border border-zinc-200'}">
+                                    ${isOpen ? 'Offen' : 'Behoben'}
+                                </span>
+                                <span class="text-[10px] text-zinc-400 font-bold">${formatDateSwiss(d.created_at)}</span>
+                            </div>
+                            <h4 class="font-bold text-zinc-800 text-xs leading-normal break-words">${escapeHtml(d.description)}</h4>
+                        </div>
+                        
+                        <div class="pt-3 border-t border-zinc-100 flex items-center justify-between text-[11px] font-medium">
+                            <div>
+                                <span class="text-zinc-400">Gemeldet von:</span>
+                                <span class="font-bold text-zinc-700 ml-1">${escapeHtml(d.reported_by)}</span>
+                            </div>
+                            <div>
+                                ${isOpen ? `
+                                    <button onclick="resolveDefect(${d.id})" class="bg-zinc-900 hover:bg-zinc-800 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold transition flex items-center shadow-sm">
+                                        <i class="fa-solid fa-check mr-1"></i> Behoben
+                                    </button>
+                                ` : '<span class="text-emerald-600 font-bold flex items-center"><i class="fa-solid fa-circle-check mr-1.5"></i> Erledigt</span>'}
+                            </div>
+                        </div>
+                    </div>
                 `;
-                tbody.appendChild(row);
+                grid.appendChild(card);
             });
         });
     }
@@ -1469,28 +1468,28 @@
         .then(res => res.json())
         .then(expenses => {
             const summary = document.getElementById('expenses-summary');
-            const tbody = document.getElementById('expenses-table-body');
-            tbody.innerHTML = "";
+            const list = document.getElementById('expenses-list');
+            list.innerHTML = "";
             
             summary.innerText = `${expenses.length} Ausgaben`;
             
             if (expenses.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="px-4 py-6 text-center text-slate-400">Keine Ausgaben vorhanden.</td></tr>`;
+                list.innerHTML = `<div class="py-8 text-center text-zinc-400 font-semibold text-xs bg-white rounded-2xl border border-zinc-200/50">Keine Ausgaben vorhanden.</div>`;
                 calculateSplit(expenses);
                 return;
             }
             
             expenses.forEach(e => {
-                const row = document.createElement('tr');
-                row.className = "border-b border-slate-100 hover:bg-slate-50 transition";
+                const itemDiv = document.createElement('div');
+                itemDiv.className = "bg-white rounded-2xl border border-zinc-200/50 p-4 flex items-center justify-between hover:shadow-md hover:shadow-zinc-100/10 transition duration-200";
                 
-                let receiptHtml = '<span class="text-slate-300">—</span>';
+                let receiptHtml = '';
                 if (e.receipt_path) {
                     const isPdf = e.receipt_path.toLowerCase().endsWith('.pdf');
-                    const iconClass = isPdf ? 'fa-regular fa-file-pdf text-red-600' : 'fa-regular fa-file-image text-blue-600';
+                    const iconClass = isPdf ? 'fa-regular fa-file-pdf text-rose-600' : 'fa-regular fa-file-image text-emerald-600';
                     receiptHtml = `
-                        <a href="${e.receipt_path}" target="_blank" class="inline-flex items-center justify-center p-2 border border-slate-200 rounded hover:bg-slate-50 transition">
-                            <i class="${iconClass} text-base"></i>
+                        <a href="${e.receipt_path}" target="_blank" class="flex items-center justify-center w-8 h-8 rounded-xl bg-zinc-50 border border-zinc-200 hover:bg-zinc-100 transition mr-2" title="Beleg ansehen">
+                            <i class="${iconClass}"></i>
                         </a>
                     `;
                 }
@@ -1499,22 +1498,38 @@
                 const sharedNames = e.shared_by ? e.shared_by.split(',') : ["Chiara Benz", "Seraina Benz", "Alex Benz"];
                 const sharedDisplay = (sharedNames.length === 3) ? "Alle" : sharedNames.map(n => n.split(' ')[0]).join(', ');
                 
-                row.innerHTML = `
-                    <td class="px-4 py-3 font-medium text-slate-800">${escapeHtml(e.item_description)}</td>
-                    <td class="px-4 py-3 text-right font-semibold text-slate-800">${e.amount.toFixed(2)} CHF</td>
-                    <td class="px-4 py-3 font-semibold text-slate-600">${escapeHtml(e.paid_by)}</td>
-                    <td class="px-4 py-3 text-slate-500 font-medium">${escapeHtml(sharedDisplay)}</td>
-                    <td class="px-4 py-3 text-center">${receiptHtml}</td>
-                    <td class="px-4 py-3 text-slate-400">${formatDateSwiss(e.created_at)}</td>
-                    <td class="px-4 py-3 text-right">
-                        ${(loggedInUser && (e.paid_by === loggedInUser || userRole === 'admin')) ? `
-                            <button onclick="deleteExpense(${e.id})" class="bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 px-2 py-0.5 rounded text-[10px] font-semibold transition">
-                                Löschen
-                            </button>
-                        ` : '<span class="text-slate-300">—</span>'}
-                    </td>
+                itemDiv.innerHTML = `
+                    <div class="flex items-center space-x-4 min-w-0">
+                        <div class="w-10 h-10 rounded-xl bg-zinc-100 flex items-center justify-center font-bold text-zinc-500 shrink-0 select-none">
+                            <i class="fa-solid fa-receipt text-zinc-400 text-xs"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <h4 class="font-bold text-zinc-800 text-xs truncate">${escapeHtml(e.item_description)}</h4>
+                            <div class="flex flex-wrap items-center gap-x-2.5 gap-y-0.5 mt-0.5 text-[10px] text-zinc-400 font-semibold">
+                                <span class="text-zinc-500">Bezahlt von: <strong class="text-zinc-650">${escapeHtml(e.paid_by)}</strong></span>
+                                <span class="w-1 h-1 rounded-full bg-zinc-300"></span>
+                                <span>Beteiligte: <strong class="text-zinc-650">${escapeHtml(sharedDisplay)}</strong></span>
+                                <span class="w-1 h-1 rounded-full bg-zinc-300"></span>
+                                <span>${formatDateSwiss(e.created_at)}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center space-x-3 shrink-0">
+                        ${receiptHtml}
+                        <div class="text-right mr-1">
+                            <span class="text-xs font-black text-zinc-900 block">${e.amount.toFixed(2)} CHF</span>
+                        </div>
+                        <div>
+                            ${(loggedInUser && (e.paid_by === loggedInUser || userRole === 'admin')) ? `
+                                <button onclick="deleteExpense(${e.id})" class="text-rose-600 hover:text-rose-700 p-2 hover:bg-rose-50 rounded-lg transition text-xs" title="Löschen">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
                 `;
-                tbody.appendChild(row);
+                list.appendChild(itemDiv);
             });
             
             calculateSplit(expenses);
