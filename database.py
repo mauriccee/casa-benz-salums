@@ -22,7 +22,6 @@ def get_db_connection():
         if not psycopg2:
             raise ImportError("psycopg2 is not installed but DATABASE_URL is set for PostgreSQL.")
         db_url = os.environ.get('DATABASE_URL')
-        # Render and other providers often use postgres:// prefix, but psycopg2 requires postgresql://
         if db_url.startswith("postgres://"):
             db_url = db_url.replace("postgres://", "postgresql://", 1)
         conn = psycopg2.connect(db_url)
@@ -43,7 +42,6 @@ def init_db():
     cursor = get_cursor(conn, db_type)
     
     if db_type == 'postgres':
-        # PostgreSQL DDL
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS bookings (
                 id SERIAL PRIMARY KEY,
@@ -85,8 +83,13 @@ def init_db():
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         ''')
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS settings (
+                key VARCHAR(255) PRIMARY KEY,
+                value TEXT NOT NULL
+            )
+        ''')
     else:
-        # SQLite DDL
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS bookings (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -105,7 +108,7 @@ def init_db():
             CREATE TABLE IF NOT EXISTS holiday_cache (
                 key TEXT PRIMARY KEY,
                 data TEXT NOT NULL,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                updated_at TEXT DEFAULT CURRENT_TIMESTAMP
             )
         ''')
         cursor.execute('''
@@ -128,8 +131,31 @@ def init_db():
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         ''')
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS settings (
+                key TEXT PRIMARY KEY,
+                value TEXT NOT NULL
+            )
+        ''')
     
     conn.commit()
+    
+    # Seed default pins if settings is empty
+    cursor.execute("SELECT COUNT(*) as count FROM settings")
+    row = cursor.fetchone()
+    if dict(row)['count'] == 0:
+        if db_type == 'postgres':
+            cursor.execute("INSERT INTO settings (key, value) VALUES ('pin_chiara', '1111')")
+            cursor.execute("INSERT INTO settings (key, value) VALUES ('pin_seraina', '2222')")
+            cursor.execute("INSERT INTO settings (key, value) VALUES ('pin_alex', '3333')")
+            cursor.execute("INSERT INTO settings (key, value) VALUES ('pin_admin', '1234')")
+        else:
+            cursor.execute("INSERT INTO settings (key, value) VALUES ('pin_chiara', '1111')")
+            cursor.execute("INSERT INTO settings (key, value) VALUES ('pin_seraina', '2222')")
+            cursor.execute("INSERT INTO settings (key, value) VALUES ('pin_alex', '3333')")
+            cursor.execute("INSERT INTO settings (key, value) VALUES ('pin_admin', '1234')")
+        conn.commit()
+        
     conn.close()
 
 def add_booking(guest_name, guest_email, guest_phone, start_date, end_date, message, contact_person):
@@ -166,7 +192,7 @@ def get_all_bookings():
     for row in rows:
         d = dict(row)
         if 'created_at' in d and not isinstance(d['created_at'], str) and d['created_at'] is not None:
-            d['created_at'] = d['created_at'].strftime("%Y-%m-%d %H-%M-%S")
+            d['created_at'] = d['created_at'].strftime("%Y-%m-%d %H:%M:%S")
         result.append(d)
         
     conn.close()
@@ -178,6 +204,21 @@ def approve_booking(booking_id):
     cursor = get_cursor(conn, db_type)
     
     query = "UPDATE bookings SET status = 'approved' WHERE id = ?"
+    if db_type == 'postgres':
+        query = query.replace('?', '%s')
+        
+    cursor.execute(query, (booking_id,))
+    conn.commit()
+    success = cursor.rowcount > 0
+    conn.close()
+    return success
+
+def reject_booking(booking_id):
+    db_type = get_db_type()
+    conn = get_db_connection()
+    cursor = get_cursor(conn, db_type)
+    
+    query = "UPDATE bookings SET status = 'rejected' WHERE id = ?"
     if db_type == 'postgres':
         query = query.replace('?', '%s')
         
@@ -201,6 +242,14 @@ def delete_booking(booking_id):
     success = cursor.rowcount > 0
     conn.close()
     return success
+
+def clear_all_bookings():
+    db_type = get_db_type()
+    conn = get_db_connection()
+    cursor = get_cursor(conn, db_type)
+    cursor.execute('DELETE FROM bookings')
+    conn.commit()
+    conn.close()
 
 def get_cached_holidays(key):
     db_type = get_db_type()
@@ -358,6 +407,46 @@ def delete_expense(expense_id):
     success = cursor.rowcount > 0
     conn.close()
     return success
+
+# Settings helpers
+def get_setting(key, default=None):
+    db_type = get_db_type()
+    conn = get_db_connection()
+    cursor = get_cursor(conn, db_type)
+    
+    query = "SELECT value FROM settings WHERE key = ?"
+    if db_type == 'postgres':
+        query = query.replace('?', '%s')
+        
+    cursor.execute(query, (key,))
+    row = cursor.fetchone()
+    conn.close()
+    
+    if row:
+        return row['value']
+    return default
+
+def set_setting(key, value):
+    db_type = get_db_type()
+    conn = get_db_connection()
+    cursor = get_cursor(conn, db_type)
+    
+    if db_type == 'postgres':
+        query = '''
+            INSERT INTO settings (key, value)
+            VALUES (%s, %s)
+            ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value
+        '''
+        cursor.execute(query, (key, value))
+    else:
+        query = '''
+            INSERT OR REPLACE INTO settings (key, value)
+            VALUES (?, ?)
+        '''
+        cursor.execute(query, (key, value))
+        
+    conn.commit()
+    conn.close()
 
 # Initialize database on import
 init_db()
