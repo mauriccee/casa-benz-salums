@@ -5,54 +5,54 @@
 {% block content %}
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     
-    <!-- Header Block with Login Console -->
-    <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6 mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+    <!-- Modern Header Banner with Sleek Login Pill -->
+    <div class="bg-white rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.02)] border border-zinc-200/50 p-6 mb-8 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
         <div>
-            <h1 class="text-2xl font-bold text-slate-900">Familien-Portal – Via pendas 27</h1>
-            <p class="text-sm text-slate-500 mt-1">
-                Internes Tool zur Abstimmung, Mängelverwaltung und Nebenkostenabrechnung.
+            <h1 class="text-xl font-extrabold text-zinc-900 tracking-tight sm:text-2xl">Familien-Portal – Via pendas 27</h1>
+            <p class="text-xs text-zinc-400 mt-1 font-medium">
+                Internes Tool zur Belegungsabstimmung, Mängelverwaltung und Nebenkostenabrechnung.
             </p>
         </div>
         
-        <!-- Login Console / User Badge -->
-        <div id="login-section" class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-xs w-full md:w-auto">
+        <!-- Elegant Login Pill -->
+        <div id="login-section" class="bg-zinc-50/80 p-3.5 rounded-xl border border-zinc-200/40 text-xs w-full lg:w-auto shadow-[inset_0_1px_2px_rgba(0,0,0,0.01)]">
             <div id="logged-out-view" class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-                <span class="font-bold text-slate-600 self-center">Login erforderlich:</span>
-                <select id="login_user" class="px-2 py-1.5 border border-slate-300 rounded bg-white text-xs">
+                <span class="font-bold text-zinc-500 self-center text-[11px] uppercase tracking-wider">Login erforderlich:</span>
+                <select id="login_user" class="px-2.5 py-1.5 border border-zinc-200 rounded-lg bg-white text-xs text-zinc-700 focus:outline-none focus:ring-1 focus:ring-zinc-950 font-medium">
                     <option value="" disabled selected>Mitglied auswählen...</option>
                     <option value="Chiara Benz">Chiara Benz</option>
                     <option value="Seraina Benz">Seraina Benz</option>
                     <option value="Alex Benz">Alex Benz</option>
                     <option value="Admin">Admin (Master)</option>
                 </select>
-                <input type="password" id="login_pin" class="px-2 py-1.5 border border-slate-300 rounded text-xs w-24 sm:w-20" placeholder="PIN">
-                <button onclick="performLogin()" class="bg-slate-800 hover:bg-slate-900 text-white px-3 py-1.5 rounded font-semibold transition text-xs">Anmelden</button>
+                <input type="password" id="login_pin" class="px-2.5 py-1.5 border border-zinc-200 rounded-lg text-xs w-24 sm:w-20 text-center tracking-widest focus:outline-none focus:ring-1 focus:ring-zinc-950 bg-white" placeholder="PIN">
+                <button onclick="performLogin()" class="bg-zinc-900 hover:bg-zinc-800 text-white px-4 py-1.5 rounded-lg font-semibold transition text-xs shadow-sm">Anmelden</button>
             </div>
             
             <div id="logged-in-view" class="hidden flex items-center justify-between gap-6">
-                <div>
-                    <span class="text-slate-500">Angemeldet als:</span>
-                    <strong id="user-badge-name" class="text-slate-800 ml-1">Gast</strong>
-                    <span id="user-badge-role" class="ml-1.5 px-1.5 py-0.5 rounded bg-slate-200 text-slate-600 font-bold text-[10px] uppercase">Mitglied</span>
+                <div class="flex items-center space-x-2">
+                    <span class="text-zinc-400">Angemeldet als:</span>
+                    <strong id="user-badge-name" class="text-zinc-900 font-bold">Gast</strong>
+                    <span id="user-badge-role" class="px-2 py-0.5 rounded-full bg-zinc-200 text-zinc-600 font-bold text-[9px] uppercase tracking-wider">Mitglied</span>
                 </div>
-                <button onclick="performLogout()" class="text-red-600 hover:text-red-800 font-semibold border border-red-200 hover:bg-red-50 px-2 py-1 rounded transition text-[11px]">
+                <button onclick="performLogout()" class="text-red-600 hover:text-red-700 font-bold border border-red-200/60 hover:bg-red-50/50 px-2.5 py-1 rounded-lg transition text-[11px] bg-white shadow-sm">
                     <i class="fa-solid fa-right-from-bracket mr-1"></i> Abmelden
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Navigation Tabs -->
-    <div class="flex justify-between items-center mb-6">
-        <div class="flex bg-slate-100 p-1 rounded-lg border border-slate-200 text-xs">
-            <button onclick="switchTab('calendar-tab')" id="btn-calendar-tab" class="px-4 py-2 font-semibold rounded bg-white text-slate-800 shadow-sm border border-slate-200/50 transition">
-                <i class="fa-solid fa-calendar-days mr-1.5"></i> Belegungsplan
+    <!-- Modern Minimalist Segmented Navigation Tabs -->
+    <div class="flex justify-between items-center mb-8">
+        <div class="flex bg-zinc-100 p-1 rounded-xl border border-zinc-200/30 text-xs shadow-[inset_0_1px_2px_rgba(0,0,0,0.02)]">
+            <button onclick="switchTab('calendar-tab')" id="btn-calendar-tab" class="px-4 py-2 font-bold rounded-lg bg-white text-zinc-900 shadow-sm border border-zinc-200/50 transition">
+                <i class="fa-solid fa-calendar-days mr-1.5 text-zinc-500"></i> Belegungsplan
             </button>
-            <button onclick="switchTab('defects-tab')" id="btn-defects-tab" class="px-4 py-2 font-semibold rounded text-slate-600 hover:text-slate-800 transition">
-                <i class="fa-solid fa-screwdriver-wrench mr-1.5"></i> Mängelliste
+            <button onclick="switchTab('defects-tab')" id="btn-defects-tab" class="px-4 py-2 font-bold rounded-lg text-zinc-500 hover:text-zinc-900 transition">
+                <i class="fa-solid fa-screwdriver-wrench mr-1.5 text-zinc-400"></i> Mängelliste
             </button>
-            <button onclick="switchTab('expenses-tab')" id="btn-expenses-tab" class="px-4 py-2 font-semibold rounded text-slate-600 hover:text-slate-800 transition">
-                <i class="fa-solid fa-file-invoice-dollar mr-1.5"></i> Ausgaben & Belege
+            <button onclick="switchTab('expenses-tab')" id="btn-expenses-tab" class="px-4 py-2 font-bold rounded-lg text-zinc-500 hover:text-zinc-900 transition">
+                <i class="fa-solid fa-file-invoice-dollar mr-1.5 text-zinc-400"></i> Ausgaben & Belege
             </button>
         </div>
     </div>
@@ -91,90 +91,91 @@
             
             <!-- Left: Booking Form -->
             <div class="space-y-6">
-                <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
-                    <h2 class="text-base font-bold text-slate-900 border-b border-slate-100 pb-3 mb-4">
-                        <i class="fa-regular fa-calendar-plus mr-1.5 text-slate-500"></i>Termin eintragen
+                <!-- Sleek Booking Card -->
+                <div class="bg-white rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.02)] border border-zinc-200/50 p-6">
+                    <h2 class="text-sm font-bold text-zinc-800 border-b border-zinc-100 pb-3 mb-4 flex items-center">
+                        <i class="fa-regular fa-calendar-plus mr-2 text-zinc-500"></i>Termin eintragen
                     </h2>
                     
                     <form id="booking-form" onsubmit="submitBooking(event)" class="space-y-4">
-                        <div id="booking-login-alert" class="bg-amber-50 border border-amber-200 rounded p-3 text-xs text-amber-800">
-                            <i class="fa-solid fa-circle-exclamation mr-1"></i> Bitte melde dich oben an, um Termine eintragen zu können.
+                        <div id="booking-login-alert" class="bg-amber-50/60 border border-amber-250/30 rounded-xl p-3 text-xs text-amber-800 font-medium">
+                            <i class="fa-solid fa-circle-exclamation mr-1.5 text-amber-600"></i> Bitte melde dich oben an, um Termine eintragen zu können.
                         </div>
                         
                         <div class="hidden-when-logged-out">
-                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider">Mitglied</label>
-                            <input type="text" id="booking_guest_display" disabled class="mt-1 block w-full px-3 py-2 border border-slate-200 bg-slate-50 rounded text-sm text-slate-700 font-semibold">
+                            <label class="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider">Mitglied</label>
+                            <input type="text" id="booking_guest_display" disabled class="mt-1.5 block w-full px-3 py-2 border border-zinc-200 bg-zinc-50 rounded-xl text-xs text-zinc-700 font-bold">
                         </div>
                         
                         <div class="hidden-when-logged-out grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
-                                <label for="start_date" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider">Anreise *</label>
-                                <input type="date" id="start_date" required oninput="onBookingDatesInput()" class="mt-1 block w-full px-3 py-2 border border-slate-300 rounded shadow-sm focus:outline-none focus:ring-slate-500 focus:border-slate-500 text-sm">
+                                <label for="start_date" class="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider">Anreise *</label>
+                                <input type="date" id="start_date" required oninput="onBookingDatesInput()" class="mt-1.5 block w-full px-3 py-2 border border-zinc-200 rounded-xl shadow-sm focus:outline-none focus:ring-1 focus:ring-zinc-950 focus:border-zinc-950 text-xs bg-zinc-50/50 font-medium">
                             </div>
                             <div>
-                                <label for="end_date" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider">Abreise *</label>
-                                <input type="date" id="end_date" required oninput="onBookingDatesInput()" class="mt-1 block w-full px-3 py-2 border border-slate-300 rounded shadow-sm focus:outline-none focus:ring-slate-500 focus:border-slate-500 text-sm">
+                                <label for="end_date" class="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider">Abreise *</label>
+                                <input type="date" id="end_date" required oninput="onBookingDatesInput()" class="mt-1.5 block w-full px-3 py-2 border border-zinc-200 rounded-xl shadow-sm focus:outline-none focus:ring-1 focus:ring-zinc-950 focus:border-zinc-950 text-xs bg-zinc-50/50 font-medium">
                             </div>
                         </div>
 
                         <!-- Historical Overlay Banner in Form -->
-                        <div id="historical-form-alert" class="hidden bg-slate-50 border border-slate-200 rounded p-3 text-xs text-slate-600">
-                            <h4 class="font-semibold text-slate-700 mb-1"><i class="fa-solid fa-clock-rotate-left mr-1"></i> Historischer Rückblick:</h4>
-                            <ul id="historical-form-list" class="list-disc pl-4 space-y-1"></ul>
+                        <div id="historical-form-alert" class="hidden bg-zinc-50 border border-zinc-200/60 rounded-xl p-3 text-xs text-zinc-500">
+                            <h4 class="font-bold text-zinc-700 mb-1 flex items-center"><i class="fa-solid fa-clock-rotate-left mr-1.5 text-zinc-400"></i> Historischer Rückblick:</h4>
+                            <ul id="historical-form-list" class="list-disc pl-4 space-y-1 font-medium"></ul>
                         </div>
 
                         <div class="hidden-when-logged-out">
-                            <label for="message" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider">Notiz (optional)</label>
-                            <textarea id="message" rows="2" class="mt-1 block w-full px-3 py-2 border border-slate-300 rounded shadow-sm focus:outline-none focus:ring-slate-500 focus:border-slate-500 text-sm" placeholder="z.B. Wanderwoche, Familienwochenende etc."></textarea>
+                            <label for="message" class="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider">Notiz (optional)</label>
+                            <textarea id="message" rows="2" class="mt-1.5 block w-full px-3 py-2 border border-zinc-200 rounded-xl shadow-sm focus:outline-none focus:ring-1 focus:ring-zinc-950 focus:border-zinc-950 text-xs bg-zinc-50/50 font-medium" placeholder="z.B. Wanderwoche, Familienwochenende etc."></textarea>
                         </div>
 
-                        <button type="submit" id="booking-submit-btn" disabled class="w-full bg-slate-400 text-slate-200 cursor-not-allowed py-2.5 rounded text-sm font-semibold transition mt-2 shadow-sm">
+                        <button type="submit" id="booking-submit-btn" disabled class="w-full bg-zinc-200 text-zinc-400 cursor-not-allowed py-2.5 rounded-xl text-xs font-bold transition mt-2 shadow-sm">
                             Termin reservieren
                         </button>
                     </form>
                 </div>
 
-                <!-- Calendar Legend -->
-                <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-4 space-y-3">
-                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Farblegende</h3>
-                    <div class="grid grid-cols-2 gap-2 text-xs font-medium">
-                        <div class="flex items-center"><span class="w-3 h-3 bg-blue-100 border border-blue-300 rounded mr-2"></span> Schulferien (ZH)</div>
-                        <div class="flex items-center"><span class="w-3 h-3 bg-red-100 border border-red-300 rounded mr-2"></span> Feiertage (ZH)</div>
-                        <div class="flex items-center"><span class="w-3 h-3 bg-orange-100 border border-orange-300 rounded mr-2"></span> Angefragt</div>
-                        <div class="flex items-center"><span class="w-3 h-3 bg-green-100 border border-green-300 rounded mr-2"></span> Bestätigt</div>
+                <!-- Modern Calendar Legend -->
+                <div class="bg-white rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.02)] border border-zinc-200/50 p-5 space-y-4">
+                    <h3 class="text-[11px] font-bold text-zinc-400 uppercase tracking-wider">Farblegende</h3>
+                    <div class="grid grid-cols-2 gap-3 text-xs font-semibold text-zinc-600">
+                        <div class="flex items-center"><span class="w-3.5 h-3.5 bg-blue-50 border border-blue-200 rounded-md mr-2.5"></span> Schulferien</div>
+                        <div class="flex items-center"><span class="w-3.5 h-3.5 bg-rose-50 border border-rose-200 rounded-md mr-2.5"></span> Feiertage</div>
+                        <div class="flex items-center"><span class="w-3.5 h-3.5 bg-amber-50 border border-amber-250/60 rounded-md mr-2.5"></span> Angefragt</div>
+                        <div class="flex items-center"><span class="w-3.5 h-3.5 bg-emerald-50 border border-emerald-250/60 rounded-md mr-2.5"></span> Bestätigt</div>
                     </div>
                 </div>
             </div>
 
             <!-- Right: Calendar -->
-            <div class="lg:col-span-2 bg-white rounded-lg shadow-sm border border-slate-200 p-4 sm:p-6">
+            <div class="lg:col-span-2 bg-white rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.02)] border border-zinc-200/50 p-4 sm:p-6">
                 <div id="calendar" class="min-h-[500px]"></div>
             </div>
         </div>
         
         <!-- Admin & Management Panel -->
-        <div class="border-t border-slate-200 pt-6">
+        <div class="border-t border-zinc-200 pt-8 mt-4">
             <div class="text-center">
-                <span id="admin-panel-indicator" class="text-xs font-semibold text-slate-400 block mb-2">
+                <span id="admin-panel-indicator" class="text-xs font-semibold text-zinc-400 block mb-3">
                     <i class="fa-solid fa-lock mr-1"></i> Admin-Einstellungen erfordern Master-Admin-Login
                 </span>
             </div>
             
-            <div id="admin-panel" class="hidden bg-white rounded-lg shadow border border-slate-200 overflow-hidden">
-                <div class="bg-slate-800 text-white px-6 py-3 flex justify-between items-center">
-                    <span class="text-xs font-bold">Verwaltungskonsole (Master Admin)</span>
+            <div id="admin-panel" class="hidden bg-white rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.02)] border border-zinc-200/50 overflow-hidden">
+                <div class="bg-zinc-950 text-white px-6 py-4 flex justify-between items-center">
+                    <span class="text-[10px] font-bold uppercase tracking-wider">Verwaltungskonsole (Master Admin)</span>
                 </div>
                 
                 <!-- Admin Tabs -->
-                <div class="flex border-b border-slate-200 bg-slate-50 px-4 text-xs font-semibold text-slate-600">
-                    <button onclick="switchAdminSubTab('admin-bookings-subtab')" id="btn-admin-bookings-subtab" class="py-2.5 px-4 border-b-2 border-slate-800 text-slate-800">Alle Belegungen verwalten</button>
-                    <button onclick="switchAdminSubTab('admin-settings-subtab')" id="btn-admin-settings-subtab" class="py-2.5 px-4 border-b-2 border-transparent hover:text-slate-800">E-Mail & PIN-Einstellungen</button>
+                <div class="flex border-b border-zinc-200 bg-zinc-50/80 px-4 text-xs font-bold text-zinc-500">
+                    <button onclick="switchAdminSubTab('admin-bookings-subtab')" id="btn-admin-bookings-subtab" class="py-3 px-4 border-b-2 border-zinc-950 text-zinc-900">Alle Belegungen verwalten</button>
+                    <button onclick="switchAdminSubTab('admin-settings-subtab')" id="btn-admin-settings-subtab" class="py-3 px-4 border-b-2 border-transparent hover:text-zinc-900 transition">E-Mail & PIN-Einstellungen</button>
                 </div>
                 
                 <!-- Subtab 1: Manuelle Freigaben / Deletes -->
                 <div id="admin-bookings-subtab" class="admin-subtab-content p-4 overflow-x-auto text-xs">
-                    <table class="w-full text-left text-slate-500">
-                        <thead class="bg-slate-50 border-b border-slate-100 uppercase tracking-wider text-slate-400 font-semibold">
+                    <table class="w-full text-left text-zinc-500">
+                        <thead class="bg-zinc-50/80 border-b border-zinc-100 uppercase tracking-wider text-zinc-400 font-bold text-[10px]">
                             <tr>
                                 <th class="px-4 py-3">Wer bucht</th>
                                 <th class="px-4 py-3">Zeitraum</th>
@@ -183,7 +184,7 @@
                                 <th class="px-4 py-3 text-right">Aktionen</th>
                             </tr>
                         </thead>
-                        <tbody id="admin-bookings-table-body" class="divide-y divide-slate-100">
+                        <tbody id="admin-bookings-table-body" class="divide-y divide-zinc-100">
                             <!-- Populated dynamically -->
                         </tbody>
                     </table>
@@ -193,35 +194,34 @@
                 <div id="admin-settings-subtab" class="admin-subtab-content hidden p-6 text-xs grid grid-cols-1 md:grid-cols-2 gap-8">
                     <!-- Left: SMTP Form -->
                     <form id="admin-settings-form" onsubmit="saveSettings(event)" class="space-y-4">
-                        <h4 class="font-bold text-slate-800 text-sm mb-2"><i class="fa-regular fa-envelope mr-1"></i>SMTP Mail-Server konfigurieren</h4>
+                        <h4 class="font-bold text-zinc-800 text-xs mb-2 flex items-center"><i class="fa-regular fa-envelope mr-1.5 text-zinc-500"></i>SMTP Mail-Server konfigurieren</h4>
                         <div class="grid grid-cols-3 gap-4">
                             <div class="col-span-2">
-                                <label for="setting_smtp_server" class="block text-slate-500 font-semibold mb-1">SMTP Server</label>
-                                <input type="text" id="setting_smtp_server" class="w-full px-3 py-1.5 border border-slate-300 rounded" placeholder="z.B. mail.gmx.net">
+                                <label for="setting_smtp_server" class="block text-zinc-500 font-semibold mb-1">SMTP Server</label>
+                                <input type="text" id="setting_smtp_server" class="w-full px-3 py-1.5 border border-zinc-200 rounded-xl bg-zinc-50/40 text-xs focus:outline-none focus:ring-1 focus:ring-zinc-950 focus:border-zinc-950 font-semibold" placeholder="z.B. mail.gmx.net">
                             </div>
                             <div>
-                                <label for="setting_smtp_port" class="block text-slate-500 font-semibold mb-1">Port</label>
-                                <input type="text" id="setting_smtp_port" class="w-full px-3 py-1.5 border border-slate-300 rounded" placeholder="587">
+                                <label for="setting_smtp_port" class="block text-zinc-500 font-semibold mb-1">Port</label>
+                                <input type="text" id="setting_smtp_port" class="w-full px-3 py-1.5 border border-zinc-200 rounded-xl bg-zinc-50/40 text-xs focus:outline-none focus:ring-1 focus:ring-zinc-950 focus:border-zinc-950 text-center font-semibold" placeholder="587">
                             </div>
                         </div>
                         <div class="grid grid-cols-2 gap-4">
                             <div>
-                                <label for="setting_smtp_user" class="block text-slate-500 font-semibold mb-1">Benutzername (E-Mail)</label>
-                                <input type="email" id="setting_smtp_user" class="w-full px-3 py-1.5 border border-slate-300 rounded" placeholder="z.B. deines@gmx.ch">
+                                <label for="setting_smtp_user" class="block text-zinc-500 font-semibold mb-1">Benutzername (E-Mail)</label>
+                                <input type="email" id="setting_smtp_user" class="w-full px-3 py-1.5 border border-zinc-200 rounded-xl bg-zinc-50/40 text-xs focus:outline-none focus:ring-1 focus:ring-zinc-950 focus:border-zinc-950 font-semibold" placeholder="z.B. deines@gmx.ch">
                             </div>
                             <div>
-                                <label for="setting_smtp_password" class="block text-slate-500 font-semibold mb-1">Passwort</label>
-                                <input type="password" id="setting_smtp_password" class="w-full px-3 py-1.5 border border-slate-300 rounded" placeholder="Passwort oder App-Token">
+                                <label for="setting_smtp_password" class="block text-zinc-500 font-semibold mb-1">Passwort</label>
+                                <input type="password" id="setting_smtp_password" class="w-full px-3 py-1.5 border border-zinc-200 rounded-xl bg-zinc-50/40 text-xs focus:outline-none focus:ring-1 focus:ring-zinc-950 focus:border-zinc-950 font-semibold" placeholder="Passwort oder App-Token">
                             </div>
                         </div>
                         
-                        <h4 class="font-bold text-slate-800 text-sm pt-4 border-t border-slate-100"><i class="fa-solid fa-users mr-1"></i>Mitglieder-E-Mails</h4>
-                        <div>
-                            <label for="setting_seraina_email" class="block text-slate-500 font-semibold mb-1">E-Mail für Seraina Benz</label>
-                            <input type="email" id="setting_seraina_email" class="w-full px-3 py-1.5 border border-slate-300 rounded">
+                        <h4 class="font-bold text-zinc-800 text-xs pt-4 border-t border-zinc-150"><i class="fa-solid fa-users mr-1.5 text-zinc-500"></i>Mitglieder-E-Mails</h4>
+                                            <label for="setting_seraina_email" class="block text-zinc-500 font-semibold mb-1">E-Mail für Seraina Benz</label>
+                            <input type="email" id="setting_seraina_email" class="w-full px-3 py-1.5 border border-zinc-200 rounded-xl bg-zinc-50/40 text-xs focus:outline-none focus:ring-1 focus:ring-zinc-950 focus:border-zinc-950 font-semibold">
                         </div>
                         
-                        <button type="submit" class="bg-slate-800 text-white px-4 py-2 rounded font-semibold hover:bg-slate-900 transition">
+                        <button type="submit" class="bg-zinc-900 text-white px-4 py-2.5 rounded-xl font-bold hover:bg-zinc-800 transition text-xs shadow-sm">
                             SMTP & E-Mails speichern
                         </button>
                     </form>
@@ -229,81 +229,81 @@
                     <!-- Right: PIN settings & Database maintenance -->
                     <div class="space-y-6">
                         <form id="admin-pins-form" onsubmit="savePINSettings(event)" class="space-y-4">
-                            <h4 class="font-bold text-slate-800 text-sm"><i class="fa-solid fa-key mr-1"></i>Login-PINs der Mitglieder ändern</h4>
+                            <h4 class="font-bold text-zinc-800 text-xs flex items-center"><i class="fa-solid fa-key mr-1.5 text-zinc-500"></i>Login-PINs der Mitglieder ändern</h4>
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label for="setting_pin_chiara" class="block text-slate-500 font-semibold mb-1">Chiara Benz (PIN)</label>
-                                    <input type="text" id="setting_pin_chiara" class="w-full px-3 py-1.5 border border-slate-300 rounded text-center">
+                                    <label for="setting_pin_chiara" class="block text-zinc-500 font-semibold mb-1">Chiara Benz (PIN)</label>
+                                    <input type="text" id="setting_pin_chiara" class="w-full px-3 py-1.5 border border-zinc-200 rounded-xl bg-zinc-50/40 text-center font-bold text-xs focus:outline-none focus:ring-1 focus:ring-zinc-950 focus:border-zinc-950">
                                 </div>
                                 <div>
-                                    <label for="setting_pin_seraina" class="block text-slate-500 font-semibold mb-1">Seraina Benz (PIN)</label>
-                                    <input type="text" id="setting_pin_seraina" class="w-full px-3 py-1.5 border border-slate-300 rounded text-center">
+                                    <label for="setting_pin_seraina" class="block text-zinc-500 font-semibold mb-1">Seraina Benz (PIN)</label>
+                                    <input type="text" id="setting_pin_seraina" class="w-full px-3 py-1.5 border border-zinc-200 rounded-xl bg-zinc-50/40 text-center font-bold text-xs focus:outline-none focus:ring-1 focus:ring-zinc-950 focus:border-zinc-950">
                                 </div>
                                 <div>
-                                    <label for="setting_pin_alex" class="block text-slate-500 font-semibold mb-1">Alex Benz (PIN)</label>
-                                    <input type="text" id="setting_pin_alex" class="w-full px-3 py-1.5 border border-slate-300 rounded text-center">
+                                    <label for="setting_pin_alex" class="block text-zinc-500 font-semibold mb-1">Alex Benz (PIN)</label>
+                                    <input type="text" id="setting_pin_alex" class="w-full px-3 py-1.5 border border-zinc-200 rounded-xl bg-zinc-50/40 text-center font-bold text-xs focus:outline-none focus:ring-1 focus:ring-zinc-950 focus:border-zinc-950">
                                 </div>
                                 <div>
-                                    <label for="setting_pin_admin" class="block text-slate-500 font-semibold mb-1">Master Admin (PIN)</label>
-                                    <input type="text" id="setting_pin_admin" class="w-full px-3 py-1.5 border border-slate-300 rounded text-center">
+                                    <label for="setting_pin_admin" class="block text-zinc-500 font-semibold mb-1">Master Admin (PIN)</label>
+                                    <input type="text" id="setting_pin_admin" class="w-full px-3 py-1.5 border border-zinc-200 rounded-xl bg-zinc-50/40 text-center font-bold text-xs focus:outline-none focus:ring-1 focus:ring-zinc-950 focus:border-zinc-950">
                                 </div>
                             </div>
-                            <button type="submit" class="bg-slate-800 text-white px-4 py-2 rounded font-semibold hover:bg-slate-900 transition">
+                            <button type="submit" class="bg-zinc-900 text-white px-4 py-2.5 rounded-xl font-bold hover:bg-zinc-800 transition text-xs shadow-sm">
                                 PINs speichern
                             </button>
                         </form>
-
+ 
                         <!-- WhatsApp Configuration Form -->
-                        <form id="admin-whatsapp-form" onsubmit="saveWhatsAppSettings(event)" class="space-y-4 pt-6 border-t border-slate-200">
-                            <h4 class="font-bold text-slate-800 text-sm"><i class="fa-brands fa-whatsapp mr-1.5 text-emerald-600"></i>WhatsApp-Benachrichtigungen (CallMeBot)</h4>
-                            <p class="text-[10px] text-slate-400 leading-normal">
-                                Um WhatsApp-Nachrichten zu erhalten, muss jedes Mitglied einmalig dem aktuellen WhatsApp-Kontakt von CallMeBot die Nachricht <code>I allow callmebot to send me messages</code> senden und den erhaltenen API-Key hier eintragen. Die jeweils aktive Nummer findest du auf <a href="https://www.callmebot.com/" target="_blank" class="underline text-emerald-600 font-semibold">callmebot.com</a> (WhatsApp-Sektion).
+                        <form id="admin-whatsapp-form" onsubmit="saveWhatsAppSettings(event)" class="space-y-4 pt-6 border-t border-zinc-200">
+                            <h4 class="font-bold text-zinc-800 text-xs flex items-center"><i class="fa-brands fa-whatsapp mr-1.5 text-emerald-650"></i>WhatsApp-Benachrichtigungen (CallMeBot)</h4>
+                            <p class="text-[10px] text-zinc-400 leading-normal font-medium">
+                                Um WhatsApp-Nachrichten zu erhalten, muss jedes Mitglied einmalig dem aktuellen WhatsApp-Kontakt von CallMeBot die Nachricht <code>I allow callmebot to send me messages</code> senden und den erhaltenen API-Key hier eintragen. Die jeweils aktive Nummer findest du auf <a href="https://www.callmebot.com/" target="_blank" class="underline text-emerald-600 font-bold">callmebot.com</a> (WhatsApp-Sektion).
                             </p>
                             <div class="space-y-3">
                                 <div class="grid grid-cols-2 gap-2">
                                     <div>
-                                        <label for="setting_phone_chiara" class="block text-slate-500 font-semibold mb-0.5">Chiara Handynummer</label>
-                                        <input type="text" id="setting_phone_chiara" class="w-full px-2 py-1 border border-slate-300 rounded" placeholder="z.B. +41791234567">
+                                        <label for="setting_phone_chiara" class="block text-zinc-500 font-semibold mb-0.5">Chiara Handynummer</label>
+                                        <input type="text" id="setting_phone_chiara" class="w-full px-2.5 py-1.5 border border-zinc-200 rounded-xl bg-zinc-50/40 text-xs focus:outline-none focus:ring-1 focus:ring-zinc-950 focus:border-zinc-950 font-semibold" placeholder="z.B. +41791234567">
                                     </div>
                                     <div>
-                                        <label for="setting_wa_apikey_chiara" class="block text-slate-500 font-semibold mb-0.5">Chiara API-Key</label>
-                                        <input type="text" id="setting_wa_apikey_chiara" class="w-full px-2 py-1 border border-slate-300 rounded" placeholder="API-Key">
-                                    </div>
-                                </div>
-                                <div class="grid grid-cols-2 gap-2">
-                                    <div>
-                                        <label for="setting_phone_seraina" class="block text-slate-500 font-semibold mb-0.5">Seraina Handynummer</label>
-                                        <input type="text" id="setting_phone_seraina" class="w-full px-2 py-1 border border-slate-300 rounded" placeholder="z.B. +41791234567">
-                                    </div>
-                                    <div>
-                                        <label for="setting_wa_apikey_seraina" class="block text-slate-500 font-semibold mb-0.5">Seraina API-Key</label>
-                                        <input type="text" id="setting_wa_apikey_seraina" class="w-full px-2 py-1 border border-slate-300 rounded" placeholder="API-Key">
+                                        <label for="setting_wa_apikey_chiara" class="block text-zinc-500 font-semibold mb-0.5">Chiara API-Key</label>
+                                        <input type="text" id="setting_wa_apikey_chiara" class="w-full px-2.5 py-1.5 border border-zinc-200 rounded-xl bg-zinc-50/40 text-xs focus:outline-none focus:ring-1 focus:ring-zinc-950 focus:border-zinc-950 font-semibold" placeholder="API-Key">
                                     </div>
                                 </div>
                                 <div class="grid grid-cols-2 gap-2">
                                     <div>
-                                        <label for="setting_phone_alex" class="block text-slate-500 font-semibold mb-0.5">Alex Handynummer</label>
-                                        <input type="text" id="setting_phone_alex" class="w-full px-2 py-1 border border-slate-300 rounded" placeholder="z.B. +41791234567">
+                                        <label for="setting_phone_seraina" class="block text-zinc-500 font-semibold mb-0.5">Seraina Handynummer</label>
+                                        <input type="text" id="setting_phone_seraina" class="w-full px-2.5 py-1.5 border border-zinc-200 rounded-xl bg-zinc-50/40 text-xs focus:outline-none focus:ring-1 focus:ring-zinc-950 focus:border-zinc-950 font-semibold" placeholder="z.B. +41791234567">
                                     </div>
                                     <div>
-                                        <label for="setting_wa_apikey_alex" class="block text-slate-500 font-semibold mb-0.5">Alex API-Key</label>
-                                        <input type="text" id="setting_wa_apikey_alex" class="w-full px-2 py-1 border border-slate-300 rounded" placeholder="API-Key">
+                                        <label for="setting_wa_apikey_seraina" class="block text-zinc-500 font-semibold mb-0.5">Seraina API-Key</label>
+                                        <input type="text" id="setting_wa_apikey_seraina" class="w-full px-2.5 py-1.5 border border-zinc-200 rounded-xl bg-zinc-50/40 text-xs focus:outline-none focus:ring-1 focus:ring-zinc-950 focus:border-zinc-950 font-semibold" placeholder="API-Key">
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <div>
+                                        <label for="setting_phone_alex" class="block text-zinc-500 font-semibold mb-0.5">Alex Handynummer</label>
+                                        <input type="text" id="setting_phone_alex" class="w-full px-2.5 py-1.5 border border-zinc-200 rounded-xl bg-zinc-50/40 text-xs focus:outline-none focus:ring-1 focus:ring-zinc-950 focus:border-zinc-950 font-semibold" placeholder="z.B. +41791234567">
+                                    </div>
+                                    <div>
+                                        <label for="setting_wa_apikey_alex" class="block text-zinc-500 font-semibold mb-0.5">Alex API-Key</label>
+                                        <input type="text" id="setting_wa_apikey_alex" class="w-full px-2.5 py-1.5 border border-zinc-200 rounded-xl bg-zinc-50/40 text-xs focus:outline-none focus:ring-1 focus:ring-zinc-950 focus:border-zinc-950 font-semibold" placeholder="API-Key">
                                     </div>
                                 </div>
                             </div>
-                            <button type="submit" class="bg-slate-800 text-white px-4 py-2 rounded font-semibold hover:bg-slate-900 transition">
+                            <button type="submit" class="bg-zinc-900 text-white px-4 py-2.5 rounded-xl font-bold hover:bg-zinc-800 transition text-xs shadow-sm">
                                 WhatsApp speichern
                             </button>
                         </form>
                         
                         <!-- Seed clean / reset database -->
-                        <div class="pt-6 border-t border-slate-200 space-y-3">
-                            <h4 class="font-bold text-slate-800 text-sm text-red-800"><i class="fa-solid fa-triangle-exclamation mr-1"></i>Datenbank bereinigen</h4>
-                            <p class="text-xs text-slate-500 leading-snug">Hier kannst du alle fiktiven Testdaten entfernen, um das Buchungstool mit leeren Kalenderdaten zu starten.</p>
-                            <button onclick="clearDemoData()" class="bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 px-4 py-2 rounded font-semibold transition text-xs">
+                        <div class="pt-6 border-t border-zinc-200 space-y-3">
+                            <h4 class="font-bold text-red-800 text-xs flex items-center"><i class="fa-solid fa-triangle-exclamation mr-1.5"></i>Datenbank bereinigen</h4>
+                            <p class="text-[10px] text-zinc-400 leading-snug font-medium">Hier kannst du alle fiktiven Testdaten entfernen, um das Buchungstool mit leeren Kalenderdaten zu starten.</p>
+                            <button onclick="clearDemoData()" class="bg-red-50 hover:bg-red-105 text-red-700 border border-red-200/60 px-4 py-2.5 rounded-xl font-bold transition text-xs shadow-sm">
                                 Alle Belegungsdaten löschen (Testdaten entfernen)
                             </button>
-                        </div>
+                        </div>           </div>
                     </div>
                 </div>
             </div>
@@ -313,48 +313,47 @@
     <!-- ==================== TAB 2: DEFECTS LIST ==================== -->
     <div id="defects-tab" class="tab-content hidden space-y-6">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            
             <!-- Left: Add Defect Form -->
-            <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
-                <h2 class="text-base font-bold text-slate-900 border-b border-slate-100 pb-3 mb-4">
-                    <i class="fa-solid fa-circle-exclamation mr-1.5 text-slate-500"></i>Mangel melden
+            <div class="bg-white rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.02)] border border-zinc-200/50 p-6">
+                <h2 class="text-sm font-bold text-zinc-800 border-b border-zinc-100 pb-3 mb-4 flex items-center">
+                    <i class="fa-solid fa-circle-exclamation mr-2 text-zinc-500"></i>Mangel melden
                 </h2>
                 
                 <form id="defect-form" onsubmit="submitDefect(event)" class="space-y-4" enctype="multipart/form-data">
-                    <div id="defect-login-alert" class="bg-amber-50 border border-amber-200 rounded p-3 text-xs text-amber-800">
-                        <i class="fa-solid fa-circle-exclamation mr-1"></i> Bitte melde dich oben an, um Mängel melden zu können.
+                    <div id="defect-login-alert" class="bg-amber-50/60 border border-amber-250/30 rounded-xl p-3 text-xs text-amber-800 font-medium">
+                        <i class="fa-solid fa-circle-exclamation mr-1.5 text-amber-600"></i> Bitte melde dich oben an, um Mängel melden zu können.
                     </div>
                     
                     <div class="hidden-when-logged-out">
-                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider">Gemeldet von</label>
-                        <input type="text" id="defect_guest_display" disabled class="mt-1 block w-full px-3 py-2 border border-slate-200 bg-slate-50 rounded text-sm text-slate-700 font-semibold">
+                        <label class="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider">Gemeldet von</label>
+                        <input type="text" id="defect_guest_display" disabled class="mt-1.5 block w-full px-3 py-2 border border-zinc-200 bg-zinc-50 rounded-xl text-xs text-zinc-700 font-bold">
                     </div>
                     
                     <div class="hidden-when-logged-out">
-                        <label for="defect_description" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider">Beschreibung des Mangels *</label>
-                        <textarea id="defect_description" required rows="3" class="mt-1 block w-full px-3 py-2 border border-slate-300 rounded shadow-sm focus:outline-none focus:ring-slate-500 focus:border-slate-500 text-sm" placeholder="Was ist defekt? Z.B. Kaffeemaschine entkalken, Birne Bad defekt..."></textarea>
+                        <label for="defect_description" class="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider">Beschreibung des Mangels *</label>
+                        <textarea id="defect_description" required rows="3" class="mt-1.5 block w-full px-3 py-2 border border-zinc-200 rounded-xl shadow-sm focus:outline-none focus:ring-1 focus:ring-zinc-950 focus:border-zinc-950 text-xs bg-zinc-50/50 font-medium" placeholder="Was ist defekt? Z.B. Kaffeemaschine entkalken, Glühbirne im Bad defekt..."></textarea>
                     </div>
                     
                     <div class="hidden-when-logged-out">
-                        <label for="defect_image" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider">Foto hochladen (optional)</label>
-                        <input type="file" id="defect_image" accept="image/*" class="mt-1 block w-full text-xs text-slate-500 file:mr-4 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200">
+                        <label for="defect_image" class="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider">Foto hochladen (optional)</label>
+                        <input type="file" id="defect_image" accept="image/*" class="mt-1.5 block w-full text-xs text-zinc-500 file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-zinc-100 file:text-zinc-700 hover:file:bg-zinc-250/50 file:transition">
                     </div>
 
-                    <button type="submit" id="defect-submit-btn" disabled class="w-full bg-slate-400 text-slate-200 cursor-not-allowed py-2.5 rounded text-sm font-semibold transition mt-2 shadow-sm">
+                    <button type="submit" id="defect-submit-btn" disabled class="w-full bg-zinc-200 text-zinc-400 cursor-not-allowed py-2.5 rounded-xl text-xs font-bold transition mt-2 shadow-sm">
                         Mangel speichern
                     </button>
                 </form>
             </div>
 
             <!-- Right: Defects List Table -->
-            <div class="lg:col-span-2 bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
-                <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
-                    <h2 class="text-base font-bold text-slate-900">Mängelliste</h2>
-                    <span class="text-xs text-slate-400 font-semibold" id="defects-summary">Lade Mängel...</span>
+            <div class="lg:col-span-2 bg-white rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.02)] border border-zinc-200/50 overflow-hidden">
+                <div class="px-6 py-4 border-b border-zinc-100 flex justify-between items-center bg-white">
+                    <h2 class="text-sm font-bold text-zinc-800">Mängelliste</h2>
+                    <span class="text-xs text-zinc-400 font-semibold" id="defects-summary">Lade Mängel...</span>
                 </div>
                 <div class="overflow-x-auto text-xs">
-                    <table class="w-full text-left text-slate-500">
-                        <thead class="bg-slate-50 border-b border-slate-100 uppercase tracking-wider text-slate-400 font-semibold">
+                    <table class="w-full text-left text-zinc-500">
+                        <thead class="bg-zinc-50/80 border-b border-zinc-100 uppercase tracking-wider text-zinc-400 font-bold text-[10px]">
                             <tr>
                                 <th class="px-4 py-3">Mangel / Beschreibung</th>
                                 <th class="px-4 py-3">Foto</th>
@@ -363,7 +362,7 @@
                                 <th class="px-4 py-3 text-right">Aktionen</th>
                             </tr>
                         </thead>
-                        <tbody id="defects-table-body" class="divide-y divide-slate-100">
+                        <tbody id="defects-table-body" class="divide-y divide-zinc-100">
                             <!-- Populated dynamically -->
                         </tbody>
                     </table>
@@ -376,23 +375,23 @@
     <div id="expenses-tab" class="tab-content hidden space-y-6">
         
         <!-- Expense Split Analysis Banner (Kassensturz) -->
-        <div class="bg-slate-900 text-white rounded-lg p-6 shadow-sm border border-slate-800 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+        <div class="bg-zinc-950 text-white rounded-2xl p-6 shadow-[0_12px_40px_rgba(0,0,0,0.06)] border border-zinc-900 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
             <div>
-                <h3 class="font-bold text-lg"><i class="fa-solid fa-calculator mr-2 text-amber-400"></i>Kassensturz</h3>
-                <p class="text-xs text-slate-400 mt-1">Ausgabenübersicht und Verrechnung zwischen Chiara, Seraina und Alex Benz.</p>
+                <h3 class="font-bold text-base flex items-center"><i class="fa-solid fa-calculator mr-2 text-emerald-400"></i>Kassensturz</h3>
+                <p class="text-xs text-zinc-400 mt-1">Ausgabenübersicht und Verrechnung zwischen Chiara, Seraina und Alex Benz.</p>
             </div>
-            <div class="flex justify-around md:col-span-2 text-center border-t md:border-t-0 md:border-l border-slate-800 pt-4 md:pt-0 md:pl-6">
+            <div class="flex justify-around md:col-span-2 text-center border-t md:border-t-0 md:border-l border-zinc-900 pt-4 md:pt-0 md:pl-6">
                 <div>
-                    <span class="text-slate-400 text-xs uppercase block font-semibold">Ausgaben Gesamt</span>
-                    <span id="expenses-total-amt" class="text-xl font-bold text-amber-400">0.00 CHF</span>
+                    <span class="text-zinc-400 text-[10px] uppercase tracking-wider block font-bold">Ausgaben Gesamt</span>
+                    <span id="expenses-total-amt" class="text-lg font-extrabold text-emerald-400">0.00 CHF</span>
                 </div>
                 <div>
-                    <span class="text-slate-400 text-xs uppercase block font-semibold">Anteil pro Person</span>
-                    <span id="expenses-share-amt" class="text-xl font-bold text-slate-200">0.00 CHF</span>
+                    <span class="text-zinc-400 text-[10px] uppercase tracking-wider block font-bold">Schulden pro Person</span>
+                    <span id="expenses-share-amt" class="text-xs font-bold text-zinc-200 block mt-1">0.00 CHF</span>
                 </div>
                 <div>
-                    <span class="text-slate-400 text-xs uppercase block font-semibold">Ausgleichszahlungen</span>
-                    <div id="expenses-settlement" class="text-xs font-semibold text-green-400 mt-1 space-y-1">Alles ausgeglichen.</div>
+                    <span class="text-zinc-400 text-[10px] uppercase tracking-wider block font-bold">Ausgleichszahlungen</span>
+                    <div id="expenses-settlement" class="text-xs font-bold text-emerald-400 mt-1 space-y-1">Alles ausgeglichen.</div>
                 </div>
             </div>
         </div>
@@ -400,69 +399,69 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             
             <!-- Left: Add Expense Form -->
-            <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
-                <h2 class="text-base font-bold text-slate-900 border-b border-slate-100 pb-3 mb-4">
-                    <i class="fa-solid fa-cart-flatbed-suitcases mr-1.5 text-slate-500"></i>Ausgabe eintragen
+            <div class="bg-white rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.02)] border border-zinc-200/50 p-6">
+                <h2 class="text-sm font-bold text-zinc-800 border-b border-zinc-100 pb-3 mb-4 flex items-center">
+                    <i class="fa-solid fa-cart-flatbed-suitcases mr-2 text-zinc-500"></i>Ausgabe eintragen
                 </h2>
                 
                 <form id="expense-form" onsubmit="submitExpense(event)" class="space-y-4" enctype="multipart/form-data">
-                    <div id="expense-login-alert" class="bg-amber-50 border border-amber-200 rounded p-3 text-xs text-amber-800">
-                        <i class="fa-solid fa-circle-exclamation mr-1"></i> Bitte melde dich oben an, um Ausgaben eintragen zu können.
+                    <div id="expense-login-alert" class="bg-amber-50/60 border border-amber-250/30 rounded-xl p-3 text-xs text-amber-800 font-medium">
+                        <i class="fa-solid fa-circle-exclamation mr-1.5 text-amber-600"></i> Bitte melde dich oben an, um Ausgaben eintragen zu können.
                     </div>
                     
                     <div class="hidden-when-logged-out">
-                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider">Wer hat bezahlt?</label>
-                        <input type="text" id="expense_paid_display" disabled class="mt-1 block w-full px-3 py-2 border border-slate-200 bg-slate-50 rounded text-sm text-slate-700 font-semibold">
+                        <label class="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider">Wer hat bezahlt?</label>
+                        <input type="text" id="expense_paid_display" disabled class="mt-1.5 block w-full px-3 py-2 border border-zinc-200 bg-zinc-50 rounded-xl text-xs text-zinc-700 font-bold">
                     </div>
                     
                     <div class="hidden-when-logged-out">
-                        <label for="expense_item" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider">Gegenstand / Zweck *</label>
-                        <input type="text" id="expense_item" required class="mt-1 block w-full px-3 py-2 border border-slate-300 rounded shadow-sm focus:outline-none focus:ring-slate-500 focus:border-slate-500 text-sm" placeholder="z.B. Kaminholz, Kaffeebohnen, Abwaschmittel">
+                        <label for="expense_item" class="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider">Gegenstand / Zweck *</label>
+                        <input type="text" id="expense_item" required class="mt-1.5 block w-full px-3 py-2 border border-zinc-200 rounded-xl shadow-sm focus:outline-none focus:ring-1 focus:ring-zinc-950 focus:border-zinc-950 text-xs bg-zinc-50/50 font-medium" placeholder="z.B. Kaminholz, Kaffeebohnen, Abwaschmittel">
                     </div>
                     
                     <div class="hidden-when-logged-out">
-                        <label for="expense_amount" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider">Betrag (CHF) *</label>
-                        <input type="number" id="expense_amount" step="0.05" required class="mt-1 block w-full px-3 py-2 border border-slate-300 rounded shadow-sm focus:outline-none focus:ring-slate-500 focus:border-slate-500 text-sm" placeholder="0.00">
+                        <label for="expense_amount" class="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider">Betrag (CHF) *</label>
+                        <input type="number" id="expense_amount" step="0.05" required class="mt-1.5 block w-full px-3 py-2 border border-zinc-200 rounded-xl shadow-sm focus:outline-none focus:ring-1 focus:ring-zinc-950 focus:border-zinc-950 text-xs bg-zinc-50/50 font-medium" placeholder="0.00">
                     </div>
                     
                     <div class="hidden-when-logged-out">
-                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Wer war dabei? (Aufteilen auf) *</label>
-                        <div class="flex flex-wrap gap-4 text-xs font-medium text-slate-700 bg-slate-50 p-3 rounded border border-slate-200">
+                        <label class="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider mb-2">Wer war dabei? (Aufteilen auf) *</label>
+                        <div class="flex flex-wrap gap-4 text-xs font-bold text-zinc-700 bg-zinc-50 p-3 rounded-xl border border-zinc-250/30">
                             <label class="flex items-center space-x-1.5 cursor-pointer">
-                                <input type="checkbox" name="expense_shared_by" value="Chiara Benz" checked class="rounded border-slate-300 text-slate-800 focus:ring-slate-500 h-4 w-4">
+                                <input type="checkbox" name="expense_shared_by" value="Chiara Benz" checked class="rounded border-zinc-300 text-zinc-900 focus:ring-zinc-950 h-4 w-4">
                                 <span>Chiara Benz</span>
                             </label>
                             <label class="flex items-center space-x-1.5 cursor-pointer">
-                                <input type="checkbox" name="expense_shared_by" value="Seraina Benz" checked class="rounded border-slate-300 text-slate-800 focus:ring-slate-500 h-4 w-4">
+                                <input type="checkbox" name="expense_shared_by" value="Seraina Benz" checked class="rounded border-zinc-300 text-zinc-900 focus:ring-zinc-950 h-4 w-4">
                                 <span>Seraina Benz</span>
                             </label>
                             <label class="flex items-center space-x-1.5 cursor-pointer">
-                                <input type="checkbox" name="expense_shared_by" value="Alex Benz" checked class="rounded border-slate-300 text-slate-800 focus:ring-slate-500 h-4 w-4">
+                                <input type="checkbox" name="expense_shared_by" value="Alex Benz" checked class="rounded border-zinc-300 text-zinc-900 focus:ring-zinc-950 h-4 w-4">
                                 <span>Alex Benz</span>
                             </label>
                         </div>
                     </div>
                     
                     <div class="hidden-when-logged-out">
-                        <label for="expense_receipt" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider">Beleg hochladen (Bild/PDF, optional)</label>
-                        <input type="file" id="expense_receipt" accept="image/*,application/pdf" class="mt-1 block w-full text-xs text-slate-500 file:mr-4 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200">
+                        <label for="expense_receipt" class="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider">Beleg hochladen (Bild/PDF, optional)</label>
+                        <input type="file" id="expense_receipt" accept="image/*,application/pdf" class="mt-1.5 block w-full text-xs text-zinc-500 file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-zinc-100 file:text-zinc-700 hover:file:bg-zinc-250/50 file:transition">
                     </div>
 
-                    <button type="submit" id="expense-submit-btn" disabled class="w-full bg-slate-400 text-slate-200 cursor-not-allowed py-2.5 rounded text-sm font-semibold transition mt-2 shadow-sm">
+                    <button type="submit" id="expense-submit-btn" disabled class="w-full bg-zinc-200 text-zinc-400 cursor-not-allowed py-2.5 rounded-xl text-xs font-bold transition mt-2 shadow-sm">
                         Ausgabe eintragen
                     </button>
                 </form>
             </div>
 
             <!-- Right: Expenses List Table -->
-            <div class="lg:col-span-2 bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
-                <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
-                    <h2 class="text-base font-bold text-slate-900">Ausgabenliste</h2>
-                    <span class="text-xs text-slate-400 font-semibold" id="expenses-summary">Lade Ausgaben...</span>
+            <div class="lg:col-span-2 bg-white rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.02)] border border-zinc-200/50 overflow-hidden">
+                <div class="px-6 py-4 border-b border-zinc-100 flex justify-between items-center bg-white">
+                    <h2 class="text-sm font-bold text-zinc-800">Ausgabenliste</h2>
+                    <span class="text-xs text-zinc-400 font-semibold" id="expenses-summary">Lade Ausgaben...</span>
                 </div>
                 <div class="overflow-x-auto text-xs">
-                    <table class="w-full text-left text-slate-500">
-                        <thead class="bg-slate-50 border-b border-slate-100 uppercase tracking-wider text-slate-400 font-semibold">
+                    <table class="w-full text-left text-zinc-500">
+                        <thead class="bg-zinc-50/80 border-b border-zinc-100 uppercase tracking-wider text-zinc-400 font-bold text-[10px]">
                             <tr>
                                 <th class="px-4 py-3">Gegenstand / Zweck</th>
                                 <th class="px-4 py-3 text-right">Betrag</th>
@@ -473,7 +472,7 @@
                                 <th class="px-4 py-3 text-right">Aktionen</th>
                             </tr>
                         </thead>
-                        <tbody id="expenses-table-body" class="divide-y divide-slate-100">
+                        <tbody id="expenses-table-body" class="divide-y divide-zinc-100">
                             <!-- Populated dynamically -->
                         </tbody>
                     </table>
@@ -524,9 +523,9 @@
         for (const [key, btnId] of Object.entries(buttons)) {
             const btn = document.getElementById(btnId);
             if (key === tabId) {
-                btn.className = "px-4 py-2 text-xs font-semibold rounded-md bg-white text-slate-800 shadow-sm border border-slate-200/50 transition";
+                btn.className = "px-4 py-2 font-bold rounded-lg bg-white text-zinc-900 shadow-sm border border-zinc-200/50 transition";
             } else {
-                btn.className = "px-4 py-2 text-xs font-semibold rounded-md text-slate-600 hover:text-slate-800 transition";
+                btn.className = "px-4 py-2 font-bold rounded-lg text-zinc-500 hover:text-zinc-900 transition";
             }
         }
         

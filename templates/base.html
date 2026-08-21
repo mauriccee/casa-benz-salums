@@ -54,21 +54,23 @@
     </style>
     {% block extra_head %}{% endblock %}
 </head>
-<body class="flex flex-col min-h-full font-sans text-slate-700 antialiased">
+<body class="flex flex-col min-h-screen bg-zinc-50/60 text-zinc-700 antialiased font-sans">
 
-    <!-- Simple Functional Header -->
-    <header class="bg-slate-800 text-white shadow-sm">
+    <!-- Modern Minimalist White Header -->
+    <header class="bg-white border-b border-zinc-200/60 shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center space-x-3">
-                    <i class="fa-solid fa-house-laptop text-amber-400 text-xl"></i>
+                    <div class="bg-zinc-900 text-white p-2 rounded-lg flex items-center justify-center">
+                        <i class="fa-solid fa-house-chimney text-sm"></i>
+                    </div>
                     <div>
-                        <span class="font-bold tracking-tight text-white">Ferienhaus Laax</span>
-                        <span class="hidden sm:inline text-slate-400 text-xs ml-2">| Via pendas 27, 7031 Laax</span>
+                        <span class="font-bold tracking-tight text-zinc-900 text-base">Casa Benz Salums</span>
+                        <span class="hidden sm:inline text-zinc-400 text-xs ml-2">Via pendas 27, 7031 Laax</span>
                     </div>
                 </div>
-                <div class="text-xs text-slate-300 font-medium">
-                    Interner Belegungsplan
+                <div class="text-xs text-zinc-400 font-semibold uppercase tracking-wider bg-zinc-100 px-2.5 py-1 rounded-md">
+                    Familien-Portal
                 </div>
             </div>
         </div>
@@ -79,10 +81,10 @@
         {% block content %}{% endblock %}
     </main>
 
-    <!-- Simple Minimalist Footer -->
-    <footer class="bg-slate-100 text-slate-500 border-t border-slate-200 py-6 text-center text-xs">
+    <!-- Sleek Modern Footer -->
+    <footer class="bg-white border-t border-zinc-200/60 py-6 text-center text-xs text-zinc-400 shadow-[0_-1px_2px_rgba(0,0,0,0.02)]">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <p>Interner Belegungskalender zur Absprache für das Ferienhaus in Laax.</p>
+            <p>Interner Belegungskalender zur Abstimmung für das Ferienhaus in Laax.</p>
         </div>
     </footer>
 
