@@ -6,7 +6,7 @@ import smtplib
 from datetime import datetime, timedelta
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, render_template_string, jsonify, request
 from werkzeug.utils import secure_filename
 
 import database
@@ -185,48 +185,101 @@ def format_date_swiss_py(date_str):
     except Exception:
         return date_str
 
-def send_email_notifications(sender_name, start_date, end_date, message_text):
-    """Sends notification emails to all family members EXCEPT the sender."""
+def send_email_notifications(booking_id, sender_name, start_date, end_date, message_text):
+    """Sends notification HTML emails with Approve/Decline buttons to all family members EXCEPT the sender."""
     emails = get_family_emails()
     recipients = {name: email for name, email in emails.items() if name != sender_name}
     
     start_swiss = format_date_swiss_py(start_date)
     end_swiss = format_date_swiss_py(end_date)
+    auto_confirm = datetime.utcnow() + timedelta(days=10)
+    auto_confirm_swiss = auto_confirm.strftime("%d.%m.%Y")
     
     subject = f"Neue Buchungsanfrage Ferienhaus Laax: {sender_name}"
-    body = (
-        f"Hallo,\n\n"
-        f"{sender_name} hat eine Buchungsanfrage für das Ferienhaus in Laax eingetragen:\n\n"
-        f"Zeitraum: {start_swiss} bis {end_swiss}\n"
-        f"Notiz: {message_text or 'Keine Notiz'}\n\n"
-        f"Das Buchungstool ist unter https://casa-benz-salums.ch erreichbar.\n\n"
-        f"Bitte stimme dich bei Bedarf ab.\n"
-    )
     
-    # 1. Print visual log in console (Always done)
-    logger.info("=" * 60)
-    logger.info(f"EMAIL NOTIFICATION TRIGGERED BY: {sender_name}")
-    logger.info(f"Recipients: {', '.join(recipients.values())}")
-    logger.info(f"Subject: {subject}")
-    logger.info(f"Body:\n{body}")
-    logger.info("=" * 60)
-
-    # 2. SMTP config
+    # Try getting host URL from request context, fallback to production domain
+    try:
+        base_url = request.host_url.rstrip('/')
+    except RuntimeError:
+        base_url = "https://casa-benz-salums.ch"
+        
+    # 1. SMTP config
     smtp_server, smtp_port, smtp_user, smtp_password = get_smtp_config()
     
-    if smtp_server and smtp_user and smtp_password:
-        try:
-            port = int(smtp_port)
-        except ValueError:
-            port = 587
-            
-        try:
-            for recipient_name, recipient_email in recipients.items():
-                msg = MIMEMultipart()
+    logger.info("=" * 60)
+    logger.info(f"EMAIL NOTIFICATION TRIGGERED BY: {sender_name} for ID {booking_id}")
+    logger.info(f"Recipients: {', '.join(recipients.values())}")
+    logger.info("=" * 60)
+
+    try:
+        port = int(smtp_port) if smtp_port else 587
+    except ValueError:
+        port = 587
+        
+    for recipient_name, recipient_email in recipients.items():
+        recipient_first_name = recipient_name.split(' ')[0]
+        approve_url = f"{base_url}/api/bookings/email-action?action=approve&id={booking_id}&user={recipient_name}"
+        reject_url = f"{base_url}/api/bookings/email-action?action=reject_prompt&id={booking_id}&user={recipient_name}"
+        
+        # HTML template
+        html_body = f"""
+        <!DOCTYPE html>
+        <html lang="de">
+        <body style="font-family: Arial, sans-serif; background-color: #f8fafc; padding: 20px; color: #334155;">
+            <div style="max-width: 600px; margin: 0 auto; background: white; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                <div style="background: #1e293b; color: white; padding: 20px; text-align: center;">
+                    <h2 style="margin: 0; font-size: 18px;">Neue Buchungsanfrage – Ferienhaus Laax</h2>
+                </div>
+                <div style="padding: 25px; line-height: 1.6; font-size: 14px;">
+                    <p>Hallo {recipient_first_name},</p>
+                    <p><strong>{sender_name}</strong> hat eine Buchungsanfrage für das Ferienhaus eingetragen:</p>
+                    
+                    <table style="width: 100%; border-collapse: collapse; margin: 20px 0; background: #f1f5f9; border-radius: 6px; overflow: hidden;">
+                        <tr>
+                            <td style="padding: 12px; font-weight: bold; border-bottom: 1px solid #e2e8f0; width: 120px;">Zeitraum:</td>
+                            <td style="padding: 12px; border-bottom: 1px solid #e2e8f0;">{start_swiss} bis {end_swiss}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px; font-weight: bold;">Notiz:</td>
+                            <td style="padding: 12px;">{message_text or '—'}</td>
+                        </tr>
+                    </table>
+                    
+                    <p style="margin-bottom: 25px;">Bitte stimme dich bei Bedarf ab oder nutze die folgenden Buttons, um die Buchung direkt freizugeben oder abzulehnen:</p>
+                    
+                    <div style="text-align: center; margin: 30px 0;">
+                        <a href="{approve_url}" style="background-color: #16a34a; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; margin-right: 15px; display: inline-block;">Bestätigen</a>
+                        <a href="{reject_url}" style="background-color: #dc2626; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">Ablehnen</a>
+                    </div>
+                    
+                    <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 30px 0;">
+                    <p style="font-size: 11px; color: #64748b; text-align: center;">
+                        * Diese Anfrage wird am {auto_confirm_swiss} automatisch freigegeben, falls keine Rückmeldung erfolgt.
+                    </p>
+                </div>
+            </div>
+        </body>
+        </html>
+        """
+        
+        plain_body = (
+            f"Hallo {recipient_first_name},\n\n"
+            f"{sender_name} hat eine Buchungsanfrage eingetragen:\n"
+            f"Zeitraum: {start_swiss} bis {end_swiss}\n"
+            f"Notiz: {message_text or '—'}\n\n"
+            f"Zum Bestätigen: {approve_url}\n"
+            f"Zum Ablehnen: {reject_url}\n"
+        )
+        
+        if smtp_server and smtp_user and smtp_password:
+            try:
+                msg = MIMEMultipart('alternative')
                 msg['From'] = f"Casa Benz Salums <{smtp_user}>"
                 msg['To'] = recipient_email
                 msg['Subject'] = subject
-                msg.attach(MIMEText(body, 'plain', 'utf-8'))
+                
+                msg.attach(MIMEText(plain_body, 'plain', 'utf-8'))
+                msg.attach(MIMEText(html_body, 'html', 'utf-8'))
                 
                 if port == 465:
                     with smtplib.SMTP_SSL(smtp_server, port, timeout=10) as server:
@@ -237,11 +290,62 @@ def send_email_notifications(sender_name, start_date, end_date, message_text):
                         server.starttls()
                         server.login(smtp_user, smtp_password)
                         server.sendmail(smtp_user, recipient_email, msg.as_string())
-            logger.info("SMTP emails sent successfully.")
+                logger.info(f"SMTP email sent successfully to {recipient_name}.")
+            except Exception as e:
+                logger.error(f"Failed to send SMTP email to {recipient_name}: {e}")
+        else:
+            logger.info(f"[NO SMTP] Email log for {recipient_name}:\nApprove: {approve_url}\nReject: {reject_url}")
+
+def send_rejection_notification(guest_name, approver_name, start_date, end_date, reason_text):
+    """Sends a notification email to the booking creator informing them of the rejection and the reason."""
+    emails = get_family_emails()
+    recipient_email = emails.get(guest_name)
+    if not recipient_email:
+        return
+        
+    start_swiss = format_date_swiss_py(start_date)
+    end_swiss = format_date_swiss_py(end_date)
+    
+    subject = f"Buchungsanfrage abgelehnt: {guest_name}"
+    body = (
+        f"Hallo {guest_name.split(' ')[0]},\n\n"
+        f"Deine Buchungsanfrage für das Ferienhaus in Laax im Zeitraum {start_swiss} bis {end_swiss} "
+        f"wurde von {approver_name} abgelehnt.\n\n"
+        f"Begründung:\n\"{reason_text}\"\n\n"
+        f"Das Buchungstool ist unter https://casa-benz-salums.ch erreichbar.\n"
+    )
+    
+    logger.info("=" * 60)
+    logger.info(f"REJECTION NOTIFICATION SENT TO: {guest_name} ({recipient_email})")
+    logger.info(f"Reason: {reason_text}")
+    logger.info("=" * 60)
+    
+    smtp_server, smtp_port, smtp_user, smtp_password = get_smtp_config()
+    if smtp_server and smtp_user and smtp_password:
+        try:
+            port = int(smtp_port) if smtp_port else 587
+        except ValueError:
+            port = 587
+            
+        msg = MIMEMultipart()
+        msg['From'] = f"Casa Benz Salums <{smtp_user}>"
+        msg['To'] = recipient_email
+        msg['Subject'] = subject
+        msg.attach(MIMEText(body, 'plain', 'utf-8'))
+        
+        try:
+            if port == 465:
+                with smtplib.SMTP_SSL(smtp_server, port, timeout=10) as server:
+                    server.login(smtp_user, smtp_password)
+                    server.sendmail(smtp_user, recipient_email, msg.as_string())
+            else:
+                with smtplib.SMTP(smtp_server, port, timeout=10) as server:
+                    server.starttls()
+                    server.login(smtp_user, smtp_password)
+                    server.sendmail(smtp_user, recipient_email, msg.as_string())
+            logger.info("Rejection email sent successfully.")
         except Exception as e:
-            logger.error(f"Failed to send SMTP emails: {e}")
-    else:
-        logger.info("SMTP configuration not complete. Emails logged to console only.")
+            logger.error(f"Failed to send rejection SMTP email: {e}")
 
 def check_and_auto_approve():
     """Finds pending bookings that are older than 10 days and auto-approves them."""
@@ -441,7 +545,7 @@ def api_bookings():
             contact_person=contact_person
         )
         
-        send_email_notifications(guest_name, start_date, end_date, message)
+        send_email_notifications(booking_id, guest_name, start_date, end_date, message)
         
         return jsonify({
             'success': True,
@@ -674,6 +778,124 @@ def api_settings():
         if 'pin_admin' in data: database.set_setting('pin_admin', data.get('pin_admin', '1234'))
         
         return jsonify({'success': True, 'message': 'Einstellungen gespeichert.'})
+
+@app.route('/api/bookings/email-action', methods=['GET', 'POST'])
+def api_email_action():
+    action = request.values.get('action')
+    booking_id_str = request.values.get('id')
+    user = request.values.get('user')
+    
+    if not action or not booking_id_str or not user:
+        return "Fehlende Parameter (action, id, user).", 400
+        
+    try:
+        booking_id = int(booking_id_str)
+    except ValueError:
+        return "Ungültige Buchungs-ID.", 400
+        
+    # Get booking details
+    bookings = database.get_all_bookings()
+    booking = next((b for b in bookings if b['id'] == booking_id), None)
+    if not booking:
+        return f"Die Buchungsanfrage (ID {booking_id}) existiert nicht oder wurde bereits gelöscht/abgelehnt.", 404
+        
+    # Prevent self-approval via email link
+    if action == 'approve' and booking['guest_name'] == user:
+        return f"<h3>Fehler:</h3> Du kannst deine eigene Buchung nicht selbst freigeben. Das müssen die anderen Familienmitglieder tun.", 403
+        
+    if request.method == 'GET':
+        if action == 'approve':
+            success = database.approve_booking(booking_id)
+            if success:
+                return render_template_string("""
+                <!DOCTYPE html>
+                <html lang="de">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Buchung bestätigt</title>
+                    <script src="https://cdn.tailwindcss.com"></script>
+                </head>
+                <body class="bg-slate-50 flex items-center justify-center min-h-screen p-4 text-center font-sans antialiased text-slate-700">
+                    <div class="bg-white p-8 rounded-lg shadow border border-slate-200 max-w-md w-full">
+                        <div class="text-green-600 text-5xl mb-4"><i class="fa-solid fa-circle-check"></i></div>
+                        <h1 class="text-xl font-bold text-slate-800 mb-2">Erfolgreich bestätigt!</h1>
+                        <p class="text-sm text-slate-500 mb-6">Vielen Dank, <strong>{{ user }}</strong>. Die Buchung von <strong>{{ guest }}</strong> wurde freigegeben und ist nun im Kalender eingetragen.</p>
+                        <a href="/" class="inline-block bg-slate-800 text-white px-6 py-2 rounded text-sm font-semibold hover:bg-slate-900 transition">Zum Portal</a>
+                    </div>
+                </body>
+                </html>
+                """, user=user, guest=booking['guest_name'])
+            return "Datenbankfehler bei Freigabe.", 500
+            
+        elif action == 'reject_prompt':
+            return render_template_string("""
+            <!DOCTYPE html>
+            <html lang="de">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Buchung ablehnen</title>
+                <script src="https://cdn.tailwindcss.com"></script>
+            </head>
+            <body class="bg-slate-50 flex items-center justify-center min-h-screen p-4 font-sans antialiased text-slate-700">
+                <div class="bg-white p-8 rounded-lg shadow border border-slate-200 max-w-md w-full">
+                    <h1 class="text-xl font-bold text-slate-800 mb-2 text-center">Buchung ablehnen</h1>
+                    <p class="text-xs text-slate-500 mb-6 text-center">Bitte gib eine Begründung für die Ablehnung der Buchungsanfrage von <strong>{{ guest }}</strong> an.</p>
+                    
+                    <form action="/api/bookings/email-action" method="POST" class="space-y-4">
+                        <input type="hidden" name="action" value="reject_submit">
+                        <input type="hidden" name="id" value="{{ booking_id }}">
+                        <input type="hidden" name="user" value="{{ user }}">
+                        
+                        <div>
+                            <label for="reason" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Begründung *</label>
+                            <textarea id="reason" name="reason" required rows="3" class="w-full px-3 py-2 border border-slate-300 rounded text-sm focus:ring-slate-500 focus:border-slate-500" placeholder="Z.B. Terminkonflikt, bin selber dort, etc."></textarea>
+                        </div>
+                        
+                        <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded text-sm font-semibold transition">
+                            Buchung ablehnen
+                        </button>
+                    </form>
+                </div>
+            </body>
+            </html>
+            """, user=user, guest=booking['guest_name'], booking_id=booking_id)
+            
+    elif request.method == 'POST' and action == 'reject_submit':
+        reason = request.form.get('reason')
+        if not reason:
+            return "Begründung fehlt.", 400
+            
+        success = database.reject_booking(booking_id)
+        if success:
+            send_rejection_notification(
+                guest_name=booking['guest_name'],
+                approver_name=user,
+                start_date=booking['start_date'],
+                end_date=booking['end_date'],
+                reason_text=reason
+            )
+            return render_template_string("""
+            <!DOCTYPE html>
+            <html lang="de">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Buchung abgelehnt</title>
+                <script src="https://cdn.tailwindcss.com"></script>
+            </head>
+            <body class="bg-slate-50 flex items-center justify-center min-h-screen p-4 text-center font-sans antialiased text-slate-700">
+                <div class="bg-white p-8 rounded-lg shadow border border-slate-200 max-w-md w-full">
+                    <div class="text-red-600 text-5xl mb-4"><i class="fa-solid fa-circle-xmark"></i></div>
+                    <h1 class="text-xl font-bold text-slate-800 mb-2">Erfolgreich abgelehnt</h1>
+                    <p class="text-sm text-slate-500 mb-6">Die Anfrage wurde abgelehnt und der Ersteller wurde per E-Mail informiert.</p>
+                    <a href="/" class="inline-block bg-slate-800 text-white px-6 py-2 rounded text-sm font-semibold hover:bg-slate-900 transition">Zum Portal</a>
+                </div>
+            </body>
+            </html>
+            """)
+        return "Datenbankfehler bei Ablehnung.", 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001, debug=True)
