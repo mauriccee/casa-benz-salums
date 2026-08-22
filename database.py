@@ -90,6 +90,16 @@ def init_db():
                 value TEXT NOT NULL
             )
         ''')
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS shopping_list (
+                id SERIAL PRIMARY KEY,
+                item_name VARCHAR(255) NOT NULL,
+                quantity VARCHAR(100),
+                status VARCHAR(50) DEFAULT 'pending',
+                added_by VARCHAR(255) NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
     else:
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS bookings (
@@ -137,6 +147,16 @@ def init_db():
             CREATE TABLE IF NOT EXISTS settings (
                 key TEXT PRIMARY KEY,
                 value TEXT NOT NULL
+            )
+        ''')
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS shopping_list (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                item_name TEXT NOT NULL,
+                quantity TEXT,
+                status TEXT DEFAULT 'pending',
+                added_by TEXT NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         ''')
     
@@ -498,6 +518,89 @@ def set_setting(key, value):
         
     conn.commit()
     conn.close()
+
+# Shopping List Helpers
+def add_shopping_item(item_name, quantity, added_by):
+    db_type = get_db_type()
+    conn = get_db_connection()
+    cursor = get_cursor(conn, db_type)
+    
+    query = '''
+        INSERT INTO shopping_list (item_name, quantity, added_by, status)
+        VALUES (?, ?, ?, 'pending')
+    '''
+    
+    if db_type == 'postgres':
+        query = query.replace('?', '%s') + " RETURNING id"
+        cursor.execute(query, (item_name, quantity, added_by))
+        item_id = cursor.fetchone()['id']
+    else:
+        cursor.execute(query, (item_name, quantity, added_by))
+        item_id = cursor.lastrowid
+        
+    conn.commit()
+    conn.close()
+    return item_id
+
+def get_all_shopping_items():
+    db_type = get_db_type()
+    conn = get_db_connection()
+    cursor = get_cursor(conn, db_type)
+    
+    cursor.execute('SELECT * FROM shopping_list ORDER BY status DESC, created_at DESC')
+    rows = cursor.fetchall()
+    
+    result = []
+    for row in rows:
+        d = dict(row)
+        if 'created_at' in d and not isinstance(d['created_at'], str) and d['created_at'] is not None:
+            d['created_at'] = d['created_at'].strftime("%Y-%m-%d %H:%M:%S")
+        result.append(d)
+        
+    conn.close()
+    return result
+
+def toggle_shopping_item(item_id, status):
+    db_type = get_db_type()
+    conn = get_db_connection()
+    cursor = get_cursor(conn, db_type)
+    
+    query = "UPDATE shopping_list SET status = ? WHERE id = ?"
+    if db_type == 'postgres':
+        query = query.replace('?', '%s')
+        
+    cursor.execute(query, (status, item_id))
+    conn.commit()
+    success = cursor.rowcount > 0
+    conn.close()
+    return success
+
+def delete_shopping_item(item_id):
+    db_type = get_db_type()
+    conn = get_db_connection()
+    cursor = get_cursor(conn, db_type)
+    
+    query = "DELETE FROM shopping_list WHERE id = ?"
+    if db_type == 'postgres':
+        query = query.replace('?', '%s')
+        
+    cursor.execute(query, (item_id,))
+    conn.commit()
+    success = cursor.rowcount > 0
+    conn.close()
+    return success
+
+def clear_completed_shopping_items():
+    db_type = get_db_type()
+    conn = get_db_connection()
+    cursor = get_cursor(conn, db_type)
+    
+    query = "DELETE FROM shopping_list WHERE status = 'completed'"
+    cursor.execute(query)
+    conn.commit()
+    success = cursor.rowcount > 0
+    conn.close()
+    return success
 
 # Initialize database on import
 init_db()

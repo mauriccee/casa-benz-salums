@@ -414,6 +414,59 @@
         </div>
     </div>
 
+    <!-- ==================== TAB 4: SHOPPING LIST ==================== -->
+    <div id="shopping-tab" class="tab-content hidden">
+        <div class="flex flex-col lg:flex-row gap-6 items-start min-h-[60vh]">
+
+            <!-- LEFT: Shopping List -->
+            <div class="flex-grow min-w-0">
+                <div class="flex justify-between items-center pb-3 mb-4 border-b border-zinc-200/60 select-none">
+                    <h3 class="text-xs font-bold text-zinc-400 uppercase tracking-wider">Einkaufsliste</h3>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="clearCompletedShoppingItems()" id="clear-completed-btn" class="hidden text-[10px] text-rose-600 hover:text-rose-700 font-bold bg-rose-50 px-2.5 py-1 rounded-lg border border-rose-250/20 transition">Erledigte löschen</button>
+                        <span class="text-xs text-zinc-400 font-bold uppercase tracking-wider" id="shopping-summary">Lade...</span>
+                    </div>
+                </div>
+                <div id="shopping-list" class="space-y-2">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+
+            <!-- RIGHT: Form Panel (sticky) -->
+            <div class="w-full lg:w-80 xl:w-96 shrink-0 lg:sticky lg:top-4">
+                <div class="bg-zinc-900 text-white rounded-t-2xl px-5 py-4 flex items-center">
+                    <i class="fa-solid fa-cart-plus mr-2.5 text-emerald-400 text-sm"></i>
+                    <h3 class="text-xs font-extrabold uppercase tracking-wider">Eintrag hinzufügen</h3>
+                </div>
+                <div class="bg-white rounded-b-2xl border border-zinc-200/50 border-t-0 shadow-[0_8px_30px_rgba(0,0,0,0.04)] p-5">
+                    <form id="shopping-form" onsubmit="submitShoppingItem(event)" class="space-y-3.5">
+                        <div id="shopping-login-alert" class="bg-amber-50 border border-amber-200/50 rounded-xl p-3.5 text-[11px] text-amber-800 font-medium leading-relaxed">
+                            <i class="fa-solid fa-circle-exclamation mr-1.5 text-amber-500"></i>
+                            Bitte oben rechts anmelden, um Artikel hinzufügen zu können.
+                        </div>
+                        <div class="hidden-when-logged-out space-y-3.5">
+                            <div>
+                                <label class="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Eingetragen von</label>
+                                <input type="text" id="shopping_guest_display" disabled class="block w-full px-3 py-2 border border-zinc-200 bg-zinc-50 rounded-xl text-xs text-zinc-700 font-bold">
+                            </div>
+                            <div>
+                                <label for="shopping_item_name" class="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Artikelname *</label>
+                                <input type="text" id="shopping_item_name" required class="block w-full px-3 py-2.5 border border-zinc-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-zinc-900 text-xs bg-zinc-50/50 font-medium" placeholder="z.B. Milch, WC-Papier, Spültabs">
+                            </div>
+                            <div>
+                                <label for="shopping_quantity" class="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Menge / Details (optional)</label>
+                                <input type="text" id="shopping_quantity" class="block w-full px-3 py-2.5 border border-zinc-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-zinc-900 text-xs bg-zinc-50/50 font-medium" placeholder="z.B. 2 Liter, 1 Packung">
+                            </div>
+                            <button type="submit" id="shopping-submit-btn" disabled class="w-full bg-zinc-200 text-zinc-400 cursor-not-allowed py-2.5 rounded-xl text-xs font-bold transition mt-1">
+                                Artikel hinzufügen
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <!-- Modal for Event Details -->
@@ -450,7 +503,8 @@
         const pageTitles = {
             'calendar-tab': 'Belegungsplan',
             'defects-tab': 'Mängelliste',
-            'expenses-tab': 'Ausgaben & Belege'
+            'expenses-tab': 'Ausgaben & Belege',
+            'shopping-tab': 'Einkaufsliste'
         };
         if (pageTitles[tabId]) {
             const tEl = document.getElementById('page-title');
@@ -462,15 +516,18 @@
         const buttons = {
             'calendar-tab': 'btn-calendar-tab',
             'defects-tab': 'btn-defects-tab',
-            'expenses-tab': 'btn-expenses-tab'
+            'expenses-tab': 'btn-expenses-tab',
+            'shopping-tab': 'btn-shopping-tab'
         };
         
         for (const [key, btnId] of Object.entries(buttons)) {
             const btn = document.getElementById(btnId);
-            if (key === tabId) {
-                btn.className = "w-full flex items-center px-4 py-2.5 rounded-xl text-xs font-bold transition text-white bg-zinc-800 shadow-sm border border-zinc-700/50";
-            } else {
-                btn.className = "w-full flex items-center px-4 py-2.5 rounded-xl text-xs font-bold transition text-zinc-400 hover:text-white hover:bg-zinc-800/40";
+            if (btn) {
+                if (key === tabId) {
+                    btn.className = "w-full flex items-center px-4 py-2.5 rounded-xl text-xs font-bold transition text-white bg-zinc-800 shadow-sm border border-zinc-700/50";
+                } else {
+                    btn.className = "w-full flex items-center px-4 py-2.5 rounded-xl text-xs font-bold transition text-zinc-400 hover:text-white hover:bg-zinc-800/40";
+                }
             }
         }
         
@@ -489,6 +546,8 @@
             loadDefects();
         } else if (tabId === 'expenses-tab') {
             loadExpenses();
+        } else if (tabId === 'shopping-tab') {
+            loadShoppingItems();
         }
     }
 
@@ -680,19 +739,19 @@
 
         // Show/hide forms
         document.querySelectorAll('.hidden-when-logged-out').forEach(el => el.classList.remove('hidden'));
-        ['booking-login-alert','defect-login-alert','expense-login-alert'].forEach(id => {
+        ['booking-login-alert','defect-login-alert','expense-login-alert','shopping-login-alert'].forEach(id => {
             const el = document.getElementById(id);
             if (el) el.classList.add('hidden');
         });
 
         // Pre-fill name fields
-        ['booking_guest_display','defect_guest_display','expense_paid_display'].forEach(id => {
+        ['booking_guest_display','defect_guest_display','expense_paid_display','shopping_guest_display'].forEach(id => {
             const el = document.getElementById(id);
             if (el) el.value = loggedInUser;
         });
 
         // Enable submit buttons
-        ['booking-submit-btn','defect-submit-btn','expense-submit-btn'].forEach(id => {
+        ['booking-submit-btn','defect-submit-btn','expense-submit-btn','shopping-submit-btn'].forEach(id => {
             const btn = document.getElementById(id);
             if (btn) {
                 btn.disabled = false;
@@ -715,6 +774,7 @@
         loadPublicPendingBookings();
         loadDefects();
         loadExpenses();
+        loadShoppingItems();
     }
 
     function applyLogoutUI() {
@@ -738,13 +798,13 @@
 
         // Hide forms
         document.querySelectorAll('.hidden-when-logged-out').forEach(el => el.classList.add('hidden'));
-        ['booking-login-alert','defect-login-alert','expense-login-alert'].forEach(id => {
+        ['booking-login-alert','defect-login-alert','expense-login-alert','shopping-login-alert'].forEach(id => {
             const el = document.getElementById(id);
             if (el) el.classList.remove('hidden');
         });
 
         // Disable submit buttons
-        ['booking-submit-btn','defect-submit-btn','expense-submit-btn'].forEach(id => {
+        ['booking-submit-btn','defect-submit-btn','expense-submit-btn','shopping-submit-btn'].forEach(id => {
             const btn = document.getElementById(id);
             if (btn) {
                 btn.disabled = true;
@@ -761,6 +821,7 @@
         loadPublicPendingBookings();
         loadDefects();
         loadExpenses();
+        loadShoppingItems();
     }
 
     // Quiet, non-intrusive history comparison trigger on typing
@@ -1736,6 +1797,148 @@
         } else {
             settlementEl.innerHTML = settlements.join("<br>");
         }
+    }
+
+    // ==================== TAB 4: SHOPPING LIST LOGIC ====================
+    function loadShoppingItems() {
+        fetch('/api/shopping')
+        .then(res => res.json())
+        .then(items => {
+            const list = document.getElementById('shopping-list');
+            const summary = document.getElementById('shopping-summary');
+            const clearCompletedBtn = document.getElementById('clear-completed-btn');
+            
+            if (!list) return;
+            list.innerHTML = "";
+            if (summary) summary.innerText = `${items.length} Artikel`;
+            
+            let completedCount = 0;
+            
+            if (items.length === 0) {
+                list.innerHTML = `<div class="py-8 text-center text-zinc-400 font-semibold text-xs bg-white rounded-2xl border border-zinc-200/50">Keine Artikel auf der Einkaufsliste.</div>`;
+                if (clearCompletedBtn) clearCompletedBtn.classList.add('hidden');
+                return;
+            }
+            
+            items.forEach(item => {
+                const isCompleted = item.status === 'completed';
+                if (isCompleted) completedCount++;
+                
+                const itemDiv = document.createElement('div');
+                itemDiv.className = `bg-white rounded-2xl border border-zinc-200/50 p-4 flex items-center justify-between hover:shadow-md hover:shadow-zinc-100/10 transition duration-200 ${isCompleted ? 'opacity-60' : ''}`;
+                
+                itemDiv.innerHTML = `
+                    <div class="flex items-center space-x-3.5 min-w-0">
+                        <input type="checkbox" ${isCompleted ? 'checked' : ''} 
+                            onclick="toggleShoppingItem(${item.id}, this.checked)" 
+                            class="rounded border-zinc-300 text-zinc-950 focus:ring-zinc-900 h-4.5 w-4.5 cursor-pointer">
+                        <div class="min-w-0">
+                            <h4 class="font-bold text-zinc-850 text-xs truncate ${isCompleted ? 'line-through text-zinc-400' : ''}">${escapeHtml(item.item_name)}</h4>
+                            <div class="flex flex-wrap items-center gap-x-2 mt-0.5 text-[10px] text-zinc-400 font-semibold">
+                                ${item.quantity ? `<span>Menge: <strong class="text-zinc-650">${escapeHtml(item.quantity)}</strong></span><span class="w-1 h-1 rounded-full bg-zinc-300"></span>` : ''}
+                                <span>Hinzugefügt von: <strong class="text-zinc-650">${escapeHtml(item.added_by)}</strong></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <button onclick="deleteShoppingItem(${item.id})" class="text-zinc-400 hover:text-rose-600 p-2 hover:bg-rose-50 rounded-lg transition text-xs" title="Löschen">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+                `;
+                list.appendChild(itemDiv);
+            });
+            
+            if (clearCompletedBtn) {
+                if (completedCount > 0) {
+                    clearCompletedBtn.classList.remove('hidden');
+                } else {
+                    clearCompletedBtn.classList.add('hidden');
+                }
+            }
+        })
+        .catch(err => console.error("Error loading shopping items:", err));
+    }
+
+    function submitShoppingItem(event) {
+        event.preventDefault();
+        
+        if (!loggedInUser) {
+            alert("Bitte zuerst anmelden.");
+            return;
+        }
+        
+        const item_name = document.getElementById('shopping_item_name').value;
+        const quantity = document.getElementById('shopping_quantity').value;
+        const added_by = loggedInUser;
+        
+        fetch('/api/shopping', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ item_name, quantity, added_by })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('shopping-form').reset();
+                const displayInput = document.getElementById('shopping_guest_display');
+                if (displayInput) displayInput.value = loggedInUser;
+                loadShoppingItems();
+            } else {
+                alert("Fehler: " + data.message);
+            }
+        })
+        .catch(err => console.error("Error adding shopping item:", err));
+    }
+
+    function toggleShoppingItem(id, isChecked) {
+        const status = isChecked ? 'completed' : 'pending';
+        fetch(`/api/shopping/${id}/toggle`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                loadShoppingItems();
+            } else {
+                alert("Fehler: " + data.message);
+            }
+        })
+        .catch(err => console.error("Error toggling shopping item:", err));
+    }
+
+    function deleteShoppingItem(id) {
+        if (!confirm("Eintrag wirklich löschen?")) return;
+        fetch(`/api/shopping/${id}/delete`, {
+            method: 'POST'
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                loadShoppingItems();
+            } else {
+                alert("Fehler: " + data.message);
+            }
+        })
+        .catch(err => console.error("Error deleting shopping item:", err));
+    }
+
+    function clearCompletedShoppingItems() {
+        if (!confirm("Alle erledigten Einkäufe von der Liste löschen?")) return;
+        fetch('/api/shopping/clear-completed', {
+            method: 'POST'
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                loadShoppingItems();
+            } else {
+                alert("Fehler: " + data.message);
+            }
+        })
+        .catch(err => console.error("Error clearing completed items:", err));
     }
 
     function escapeHtml(str) {

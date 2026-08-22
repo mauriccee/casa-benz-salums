@@ -802,6 +802,46 @@ def api_delete_expense(expense_id):
         return jsonify({'success': True, 'message': 'Ausgabe gelöscht.'})
     return jsonify({'success': False, 'message': 'Ausgabe nicht gefunden.'}), 404
 
+# Shopping List API
+@app.route('/api/shopping', methods=['GET', 'POST'])
+def api_shopping():
+    if request.method == 'GET':
+        items = database.get_all_shopping_items()
+        return jsonify(items)
+        
+    elif request.method == 'POST':
+        data = request.json or request.form
+        item_name = data.get('item_name')
+        quantity = data.get('quantity', '')
+        added_by = data.get('added_by')
+        
+        if not item_name or not added_by:
+            return jsonify({'success': False, 'message': 'Gegenstand und Name sind erforderlich.'}), 400
+            
+        item_id = database.add_shopping_item(item_name, quantity, added_by)
+        return jsonify({'success': True, 'message': 'Eintrag erfolgreich hinzugefügt.', 'item_id': item_id})
+
+@app.route('/api/shopping/<int:item_id>/toggle', methods=['POST'])
+def api_toggle_shopping_item(item_id):
+    data = request.json or {}
+    status = data.get('status', 'pending') # 'pending' or 'completed'
+    success = database.toggle_shopping_item(item_id, status)
+    if success:
+        return jsonify({'success': True, 'message': 'Status aktualisiert.'})
+    return jsonify({'success': False, 'message': 'Eintrag nicht gefunden.'}), 404
+
+@app.route('/api/shopping/<int:item_id>/delete', methods=['POST'])
+def api_delete_shopping_item(item_id):
+    success = database.delete_shopping_item(item_id)
+    if success:
+        return jsonify({'success': True, 'message': 'Eintrag gelöscht.'})
+    return jsonify({'success': False, 'message': 'Eintrag nicht gefunden.'}), 404
+
+@app.route('/api/shopping/clear-completed', methods=['POST'])
+def api_clear_completed_shopping_items():
+    database.clear_completed_shopping_items()
+    return jsonify({'success': True, 'message': 'Erledigte Einträge gelöscht.'})
+
 # Settings API (SMTP and Seraina email config)
 @app.route('/api/settings', methods=['GET', 'POST'])
 def api_settings():
