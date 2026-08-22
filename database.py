@@ -158,13 +158,44 @@ def init_db():
             cursor.execute("INSERT INTO settings (key, value) VALUES ('pin_seraina', '2222')")
             cursor.execute("INSERT INTO settings (key, value) VALUES ('pin_alex', '3333')")
             cursor.execute("INSERT INTO settings (key, value) VALUES ('pin_admin', '1234')")
+            cursor.execute("INSERT INTO settings (key, value) VALUES ('phone_chiara', '+41797483754')")
+            cursor.execute("INSERT INTO settings (key, value) VALUES ('phone_alex', '+41798620712')")
+            cursor.execute("INSERT INTO settings (key, value) VALUES ('wa_apikey_chiara', '7183815')")
+            cursor.execute("INSERT INTO settings (key, value) VALUES ('wa_apikey_alex', '2161300')")
         else:
             cursor.execute("INSERT INTO settings (key, value) VALUES ('pin_chiara', '1111')")
             cursor.execute("INSERT INTO settings (key, value) VALUES ('pin_seraina', '2222')")
             cursor.execute("INSERT INTO settings (key, value) VALUES ('pin_alex', '3333')")
             cursor.execute("INSERT INTO settings (key, value) VALUES ('pin_admin', '1234')")
+            cursor.execute("INSERT INTO settings (key, value) VALUES ('phone_chiara', '+41797483754')")
+            cursor.execute("INSERT INTO settings (key, value) VALUES ('phone_alex', '+41798620712')")
+            cursor.execute("INSERT INTO settings (key, value) VALUES ('wa_apikey_chiara', '7183815')")
+            cursor.execute("INSERT INTO settings (key, value) VALUES ('wa_apikey_alex', '2161300')")
         conn.commit()
-        
+
+    # Ensure WhatsApp keys are always present (migration for existing DBs)
+    wa_defaults = [
+        ('phone_chiara',    '+41797483754'),
+        ('phone_alex',      '+41798620712'),
+        ('wa_apikey_chiara','7183815'),
+        ('wa_apikey_alex',  '2161300'),
+    ]
+    for key, value in wa_defaults:
+        try:
+            if db_type == 'postgres':
+                cursor.execute(
+                    "INSERT INTO settings (key, value) VALUES (%s, %s) ON CONFLICT (key) DO NOTHING",
+                    (key, value)
+                )
+            else:
+                cursor.execute(
+                    "INSERT OR IGNORE INTO settings (key, value) VALUES (?, ?)",
+                    (key, value)
+                )
+        except Exception:
+            pass
+    conn.commit()
+
     conn.close()
 
 def add_booking(guest_name, guest_email, guest_phone, start_date, end_date, message, contact_person):
