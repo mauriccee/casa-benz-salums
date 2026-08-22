@@ -423,6 +423,12 @@
                 <div class="flex justify-between items-center pb-3 mb-4 border-b border-zinc-200/60 select-none">
                     <h3 class="text-xs font-bold text-zinc-400 uppercase tracking-wider">Einkaufsliste</h3>
                     <div class="flex items-center space-x-2">
+                        <button onclick="copyShoppingListForReminders()" class="text-[10px] text-zinc-650 hover:text-zinc-900 font-bold bg-zinc-100 hover:bg-zinc-200/60 px-2.5 py-1 rounded-lg border border-zinc-200 transition flex items-center">
+                            <i class="fa-regular fa-copy mr-1 text-zinc-500"></i> Apple Erinnerungen
+                        </button>
+                        <button onclick="showShortcutsHelp()" class="text-[10px] text-zinc-650 hover:text-zinc-900 font-bold bg-zinc-100 hover:bg-zinc-200/60 px-2.5 py-1 rounded-lg border border-zinc-200 transition flex items-center" title="iOS Kurzbefehl Anleitung">
+                            <i class="fa-brands fa-apple mr-1 text-zinc-500"></i> iOS Kurzbefehl
+                        </button>
                         <button onclick="clearCompletedShoppingItems()" id="clear-completed-btn" class="hidden text-[10px] text-rose-600 hover:text-rose-700 font-bold bg-rose-50 px-2.5 py-1 rounded-lg border border-rose-250/20 transition">Erledigte löschen</button>
                         <span class="text-xs text-zinc-400 font-bold uppercase tracking-wider" id="shopping-summary">Lade...</span>
                     </div>
@@ -1939,6 +1945,64 @@
             }
         })
         .catch(err => console.error("Error clearing completed items:", err));
+    }
+
+    function copyShoppingListForReminders() {
+        fetch('/api/shopping?_t=' + Date.now())
+        .then(res => res.json())
+        .then(items => {
+            const pendingItems = items.filter(item => item.status !== 'completed');
+            if (pendingItems.length === 0) {
+                alert("Keine offenen Artikel zum Kopieren.");
+                return;
+            }
+            
+            const textToCopy = pendingItems.map(item => {
+                return item.quantity ? `${item.quantity} ${item.item_name}` : item.item_name;
+            }).join('\n');
+            
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                alert("Kopiert! Öffne die Apple 'Erinnerungen' App auf deinem iPhone/Mac, tippe auf eine neue Zeile und füge den Text ein. Die App erstellt automatisch für jeden Artikel eine eigene Zeile.");
+            }).catch(err => {
+                console.error("Fehler beim Kopieren:", err);
+                alert("Konnte nicht kopiert werden.");
+            });
+        });
+    }
+
+    function showShortcutsHelp() {
+        const modal = document.getElementById('event-modal');
+        const titleEl = document.getElementById('modal-title');
+        const contentEl = document.getElementById('modal-content');
+        const headerBg = document.getElementById('modal-header-bg');
+        const actionsContainer = document.getElementById('modal-user-actions');
+        
+        if (!modal || !titleEl || !contentEl || !headerBg || !actionsContainer) return;
+        
+        actionsContainer.innerHTML = "";
+        headerBg.className = "px-5 py-3 border-b border-slate-100 flex justify-between items-center bg-zinc-950 text-white";
+        titleEl.innerText = " iOS Kurzbefehl Anleitung";
+        
+        contentEl.innerHTML = `
+            <div class="space-y-3.5 leading-relaxed text-zinc-650">
+                <p class="font-medium text-[11px]">Du kannst dir einen Kurzbefehl auf dem iPhone einrichten, der mit einem Klick alle Artikel in deine Apple „Erinnerungen“ App importiert:</p>
+                <ol class="list-decimal pl-4.5 space-y-2.5 text-[11px] font-semibold text-zinc-700">
+                    <li>Öffne die <strong>Kurzbefehle</strong> App auf deinem iPhone und erstelle einen neuen Kurzbefehl.</li>
+                    <li>Füge die Aktion <strong>„Inhalte von URL abrufen“</strong> hinzu und trage folgende URL ein:<br>
+                        <code class="block bg-zinc-100 p-2 rounded-lg text-[10px] select-all font-mono text-zinc-900 mt-1">https://www.casa-benz-salums.ch/api/shopping</code>
+                    </li>
+                    <li>Füge die Aktion <strong>„Wiederholen mit jedem Element in“</strong> (Wiederholen-Schleife) hinzu.</li>
+                    <li>Ziehe die Aktion <strong>„Erinnerung hinzufügen“</strong> in die Schleife hinein.</li>
+                    <li>Klicke auf das Feld für den Titel der Erinnerung und wähle aus den Variablen: <strong>„Wiederholungseintrag“</strong> und wähle den Schlüssel <code class="bg-zinc-100 px-1 py-0.5 rounded font-mono text-zinc-800 text-[10px]">item_name</code>.</li>
+                    <li>Wähle als Liste deine gewünschte Erinnerungsliste (z.B. „Einkaufsliste“).</li>
+                </ol>
+                <div class="bg-emerald-50 border border-emerald-200/50 rounded-xl p-3 text-[10px] text-emerald-800 font-semibold leading-normal">
+                    💡 Tipp: Du kannst diesen Kurzbefehl als Widget auf deinen Home-Screen legen oder Siri sagen: „Einkaufsliste importieren“.
+                </div>
+            </div>
+        `;
+        
+        modal.classList.remove('hidden');
     }
 
     function escapeHtml(str) {
