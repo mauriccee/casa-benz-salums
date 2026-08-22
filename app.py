@@ -842,6 +842,17 @@ def api_clear_completed_shopping_items():
     database.clear_completed_shopping_items()
     return jsonify({'success': True, 'message': 'Erledigte Einträge gelöscht.'})
 
+@app.route('/api/debug-db')
+def api_debug_db():
+    try:
+        import database
+        database.init_db()
+        items = database.get_all_shopping_items()
+        return jsonify({'success': True, 'items': items})
+    except Exception as e:
+        import traceback
+        return jsonify({'success': False, 'error': str(e), 'trace': traceback.format_exc()})
+
 # Settings API (SMTP and Seraina email config)
 @app.route('/api/settings', methods=['GET', 'POST'])
 def api_settings():
