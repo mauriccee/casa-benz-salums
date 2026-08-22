@@ -626,8 +626,8 @@
             firstDay: 1, // Start week on Monday
             events: function(info, successCallback, failureCallback) {
                 Promise.all([
-                    fetch('/api/holidays').then(r => r.json()),
-                    fetch('/api/bookings').then(r => r.json())
+                    fetch('/api/holidays?_t=' + Date.now()).then(r => r.json()),
+                    fetch('/api/bookings?_t=' + Date.now()).then(r => r.json())
                 ])
                 .then(([holidays, bookings]) => {
                     successCallback([...holidays, ...bookings]);
@@ -909,7 +909,7 @@
 
     // Public list of pending bookings with inline approval/rejection for other members
     function loadPublicPendingBookings() {
-        fetch('/api/bookings')
+        fetch('/api/bookings?_t=' + Date.now())
         .then(res => res.json())
         .then(events => {
             const container = document.getElementById('public-pending-container');
@@ -1163,7 +1163,7 @@
     }
 
     function loadAdminBookingsTable() {
-        fetch('/api/bookings')
+        fetch('/api/bookings?_t=' + Date.now())
         .then(res => res.json())
         .then(bookings => {
             const tbody = document.getElementById('admin-bookings-table-body');
@@ -1438,7 +1438,7 @@
 
     // ==================== TAB 2: DEFECTS LOGIC ====================
     function loadDefects() {
-        fetch('/api/defects')
+        fetch('/api/defects?_t=' + Date.now())
         .then(res => res.json())
         .then(defects => {
             const summary = document.getElementById('defects-summary');
@@ -1556,7 +1556,7 @@
 
     // ==================== TAB 3: EXPENSES & BELEGE LOGIC ====================
     function loadExpenses() {
-        fetch('/api/expenses')
+        fetch('/api/expenses?_t=' + Date.now())
         .then(res => res.json())
         .then(expenses => {
             const summary = document.getElementById('expenses-summary');
@@ -1801,7 +1801,7 @@
 
     // ==================== TAB 4: SHOPPING LIST LOGIC ====================
     function loadShoppingItems() {
-        fetch('/api/shopping')
+        fetch('/api/shopping?_t=' + Date.now())
         .then(res => res.json())
         .then(items => {
             const list = document.getElementById('shopping-list');
