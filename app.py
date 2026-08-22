@@ -492,7 +492,7 @@ def api_login():
     username = data.get('username')
     pin = data.get('pin')
     
-    if not username or not pin:
+    if not username:
         return jsonify({'success': False, 'message': 'Name und PIN erforderlich.'}), 400
         
     pin_key = None
