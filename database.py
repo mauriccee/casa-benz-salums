@@ -160,14 +160,15 @@ def init_db():
             )
         ''')
     
+    # Commit table creations first so they are saved
+    conn.commit()
+    
     # Run migration to add shared_by column to existing DB
     try:
         cursor.execute("ALTER TABLE expenses ADD COLUMN shared_by TEXT")
         conn.commit()
     except Exception:
-        pass
-        
-    conn.commit()
+        conn.rollback()
     
     # Seed default pins if settings is empty
     cursor.execute("SELECT COUNT(*) as count FROM settings")
