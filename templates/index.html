@@ -285,74 +285,52 @@
     <!-- ==================== TAB 2: DEFECTS LIST ==================== -->
     <div id="defects-tab" class="tab-content hidden space-y-6">
         
-        <!-- Action bar -->
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 select-none">
-            <div class="flex items-center space-x-2">
-                <span class="text-xs text-zinc-400 font-bold uppercase tracking-wider" id="defects-summary">Lade Mängel...</span>
-            </div>
-            <div>
-                <button onclick="openDefectDrawer()" class="w-full sm:w-auto bg-zinc-900 hover:bg-zinc-800 text-white font-extrabold px-5 py-2.5 rounded-xl text-xs transition shadow-md flex items-center justify-center">
-                    <i class="fa-solid fa-plus mr-2 text-emerald-500"></i> Mangel melden
-                </button>
-            </div>
+        <!-- Header & Summary -->
+        <div class="flex justify-between items-center bg-transparent py-1 border-b border-zinc-200/60 pb-3 select-none">
+            <h3 class="text-xs font-bold text-zinc-400 uppercase tracking-wider">Aktive Einträge</h3>
+            <span class="text-xs text-zinc-400 font-bold uppercase tracking-wider" id="defects-summary">Lade Mängel...</span>
         </div>
 
         <!-- Full-Width defects grid -->
-        <div id="defects-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- Populated dynamically -->
+        <div id="defects-grid" class="space-y-3">
+            <!-- Populated dynamically with rows -->
         </div>
 
-        <!-- Defect Drawer Slide-over Panel -->
-        <div id="defect-drawer" class="hidden fixed inset-0 z-50 overflow-hidden select-none">
-            <!-- Backdrop -->
-            <div onclick="closeDefectDrawer()" class="absolute inset-0 bg-zinc-950/40 backdrop-blur-sm transition-opacity"></div>
-            
-            <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
-                <div class="pointer-events-auto w-screen max-w-md transform transition duration-500 ease-in-out">
-                    <div class="flex h-full flex-col bg-white shadow-2xl border-l border-zinc-200/50">
-                        <!-- Header -->
-                        <div class="bg-zinc-950 px-6 py-5 flex justify-between items-center text-white">
-                            <h2 class="text-xs font-bold uppercase tracking-wider flex items-center">
-                                <i class="fa-solid fa-circle-exclamation mr-2.5 text-rose-500"></i>Mangel melden
-                            </h2>
-                            <button onclick="closeDefectDrawer()" class="text-zinc-400 hover:text-white transition">
-                                <i class="fa-solid fa-xmark text-lg"></i>
-                            </button>
+        <!-- Mangel melden Form inline underneath -->
+        <div class="border-t border-zinc-200/80 pt-8 mt-12">
+            <div class="bg-white rounded-2xl shadow-[0_4px_25px_rgba(0,0,0,0.015)] border border-zinc-200/50 p-6 sm:p-8 max-w-xl mx-auto">
+                <h3 class="text-sm font-bold text-zinc-800 border-b border-zinc-100 pb-3 mb-5 flex items-center">
+                    <i class="fa-solid fa-circle-exclamation mr-2 text-rose-500"></i> Neuen Mangel melden
+                </h3>
+                
+                <form id="defect-form" onsubmit="submitDefect(event)" class="space-y-4" enctype="multipart/form-data">
+                    <div id="defect-login-alert" class="bg-amber-50/60 border border-amber-200/30 rounded-xl p-4 text-xs text-amber-800 font-medium">
+                        <i class="fa-solid fa-circle-exclamation mr-2 text-amber-600"></i> Bitte melde dich zuerst unten in der Seitenleiste an, um Mängel melden zu können.
+                    </div>
+                    
+                    <div class="hidden-when-logged-out space-y-4">
+                        <div>
+                            <label class="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider">Gemeldet von</label>
+                            <input type="text" id="defect_guest_display" disabled class="mt-1.5 block w-full px-3 py-2 border border-zinc-200 bg-zinc-50 rounded-xl text-xs text-zinc-700 font-bold">
                         </div>
                         
-                        <!-- Body (Form) -->
-                        <div class="flex-grow p-6 overflow-y-auto space-y-5">
-                            <form id="defect-form" onsubmit="submitDefect(event)" class="space-y-5" enctype="multipart/form-data">
-                                <div id="defect-login-alert" class="bg-amber-50/60 border border-amber-200/30 rounded-xl p-4 text-xs text-amber-800 font-medium">
-                                    <i class="fa-solid fa-circle-exclamation mr-2 text-amber-600"></i> Bitte melde dich zuerst unten in der Seitenleiste an, um Mängel melden zu können.
-                                </div>
-                                
-                                <div class="hidden-when-logged-out space-y-4">
-                                    <div>
-                                        <label class="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider">Gemeldet von</label>
-                                        <input type="text" id="defect_guest_display" disabled class="mt-1.5 block w-full px-3 py-2 border border-zinc-200 bg-zinc-50 rounded-xl text-xs text-zinc-700 font-bold">
-                                    </div>
-                                    
-                                    <div>
-                                        <label for="defect_description" class="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider">Beschreibung des Mangels *</label>
-                                        <textarea id="defect_description" required rows="3" class="mt-1.5 block w-full px-3 py-2.5 border border-zinc-200 rounded-xl shadow-sm focus:outline-none focus:ring-1 focus:ring-zinc-950 focus:border-zinc-950 text-xs bg-zinc-50/50 font-medium" placeholder="Was ist defekt? Z.B. Kaffeemaschine entkalken, Glühbirne im Bad defekt..."></textarea>
-                                    </div>
-                                    
-                                    <div>
-                                        <label for="defect_image" class="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider">Foto hochladen (optional)</label>
-                                        <input type="file" id="defect_image" accept="image/*" class="mt-1.5 block w-full text-xs text-zinc-500 file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-zinc-100 file:text-zinc-700 hover:file:bg-zinc-200/50 file:transition">
-                                    </div>
-                                </div>
-                                
-                                <!-- Drawer Actions -->
-                                <div class="pt-4 border-t border-zinc-100 flex space-x-3">
-                                    <button type="button" onclick="closeDefectDrawer()" class="flex-1 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 font-bold py-2.5 rounded-xl text-xs transition border border-zinc-200/50">Abbrechen</button>
-                                    <button type="submit" id="defect-submit-btn" disabled class="flex-1 bg-zinc-200 text-zinc-400 cursor-not-allowed py-2.5 rounded-xl text-xs font-bold transition">Mangel speichern</button>
-                                </div>
-                            </form>
+                        <div>
+                            <label for="defect_description" class="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider">Beschreibung des Mangels *</label>
+                            <textarea id="defect_description" required rows="3" class="mt-1.5 block w-full px-3 py-2.5 border border-zinc-200 rounded-xl shadow-sm focus:outline-none focus:ring-1 focus:ring-zinc-950 focus:border-zinc-950 text-xs bg-zinc-50/50 font-medium" placeholder="Was ist defekt? Z.B. Kaffeemaschine entkalken, Glühbirne im Bad defekt..."></textarea>
+                        </div>
+                        
+                        <div>
+                            <label for="defect_image" class="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider">Foto hochladen (optional)</label>
+                            <input type="file" id="defect_image" accept="image/*" class="mt-1.5 block w-full text-xs text-zinc-500 file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-zinc-100 file:text-zinc-700 hover:file:bg-zinc-200/50 file:transition">
+                        </div>
+                        
+                        <div class="pt-2">
+                            <button type="submit" id="defect-submit-btn" disabled class="w-full bg-zinc-200 text-zinc-400 cursor-not-allowed py-2.5 rounded-xl text-xs font-bold transition shadow-sm">
+                                Mangel speichern
+                            </button>
                         </div>
                     </div>
-                </div>
+                </form>
             </div>
         </div>
     </div>
@@ -382,16 +360,10 @@
             </div>
         </div>
 
-        <!-- Action bar -->
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 select-none">
-            <div class="flex items-center space-x-2">
-                <span class="text-xs text-zinc-400 font-bold uppercase tracking-wider" id="expenses-summary">Lade Ausgaben...</span>
-            </div>
-            <div>
-                <button onclick="openExpenseDrawer()" class="w-full sm:w-auto bg-zinc-900 hover:bg-zinc-800 text-white font-extrabold px-5 py-2.5 rounded-xl text-xs transition shadow-md flex items-center justify-center">
-                    <i class="fa-solid fa-plus mr-2 text-emerald-500"></i> Ausgabe eintragen
-                </button>
-            </div>
+        <!-- Header & Summary -->
+        <div class="flex justify-between items-center bg-transparent py-1 border-b border-zinc-200/60 pb-3 select-none">
+            <h3 class="text-xs font-bold text-zinc-400 uppercase tracking-wider">Ausgabenliste</h3>
+            <span class="text-xs text-zinc-400 font-bold uppercase tracking-wider" id="expenses-summary">Lade Ausgaben...</span>
         </div>
 
         <!-- Full-Width expenses list -->
@@ -399,80 +371,64 @@
             <!-- Populated dynamically -->
         </div>
 
-        <!-- Expense Drawer Slide-over Panel -->
-        <div id="expense-drawer" class="hidden fixed inset-0 z-50 overflow-hidden select-none">
-            <!-- Backdrop -->
-            <div onclick="closeExpenseDrawer()" class="absolute inset-0 bg-zinc-950/40 backdrop-blur-sm transition-opacity"></div>
-            
-            <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
-                <div class="pointer-events-auto w-screen max-w-md transform transition duration-500 ease-in-out">
-                    <div class="flex h-full flex-col bg-white shadow-2xl border-l border-zinc-200/50">
-                        <!-- Header -->
-                        <div class="bg-zinc-950 px-6 py-5 flex justify-between items-center text-white">
-                            <h2 class="text-xs font-bold uppercase tracking-wider flex items-center">
-                                <i class="fa-solid fa-cart-flatbed-suitcases mr-2.5 text-emerald-500"></i>Ausgabe eintragen
-                            </h2>
-                            <button onclick="closeExpenseDrawer()" class="text-zinc-400 hover:text-white transition">
-                                <i class="fa-solid fa-xmark text-lg"></i>
-                            </button>
+        <!-- Ausgabe eintragen Form inline underneath -->
+        <div class="border-t border-zinc-200/80 pt-8 mt-12">
+            <div class="bg-white rounded-2xl shadow-[0_4px_25px_rgba(0,0,0,0.015)] border border-zinc-200/50 p-6 sm:p-8 max-w-xl mx-auto">
+                <h3 class="text-sm font-bold text-zinc-800 border-b border-zinc-100 pb-3 mb-5 flex items-center">
+                    <i class="fa-solid fa-cart-flatbed-suitcases mr-2 text-emerald-500"></i> Neue Ausgabe eintragen
+                </h3>
+                
+                <form id="expense-form" onsubmit="submitExpense(event)" class="space-y-4" enctype="multipart/form-data">
+                    <div id="expense-login-alert" class="bg-amber-50/60 border border-amber-200/30 rounded-xl p-4 text-xs text-amber-800 font-medium">
+                        <i class="fa-solid fa-circle-exclamation mr-2 text-amber-600"></i> Bitte melde dich zuerst unten in der Seitenleiste an, um Ausgaben eintragen zu können.
+                    </div>
+                    
+                    <div class="hidden-when-logged-out space-y-4">
+                        <div>
+                            <label class="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider">Wer hat bezahlt?</label>
+                            <input type="text" id="expense_paid_display" disabled class="mt-1.5 block w-full px-3 py-2 border border-zinc-200 bg-zinc-50 rounded-xl text-xs text-zinc-700 font-bold">
                         </div>
                         
-                        <!-- Body (Form) -->
-                        <div class="flex-grow p-6 overflow-y-auto space-y-5">
-                            <form id="expense-form" onsubmit="submitExpense(event)" class="space-y-5" enctype="multipart/form-data">
-                                <div id="expense-login-alert" class="bg-amber-50/60 border border-amber-200/30 rounded-xl p-4 text-xs text-amber-800 font-medium">
-                                    <i class="fa-solid fa-circle-exclamation mr-2 text-amber-600"></i> Bitte melde dich zuerst unten in der Seitenleiste an, um Ausgaben eintragen zu können.
-                                </div>
-                                
-                                <div class="hidden-when-logged-out space-y-4">
-                                    <div>
-                                        <label class="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider">Wer hat bezahlt?</label>
-                                        <input type="text" id="expense_paid_display" disabled class="mt-1.5 block w-full px-3 py-2 border border-zinc-200 bg-zinc-50 rounded-xl text-xs text-zinc-700 font-bold">
-                                    </div>
-                                    
-                                    <div>
-                                        <label for="expense_item" class="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider">Gegenstand / Zweck *</label>
-                                        <input type="text" id="expense_item" required class="mt-1.5 block w-full px-3 py-2.5 border border-zinc-200 rounded-xl shadow-sm focus:outline-none focus:ring-1 focus:ring-zinc-950 focus:border-zinc-950 text-xs bg-zinc-50/50 font-medium" placeholder="z.B. Kaminholz, Kaffeebohnen, Abwaschmittel">
-                                    </div>
-                                    
-                                    <div>
-                                        <label for="expense_amount" class="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider">Betrag (CHF) *</label>
-                                        <input type="number" id="expense_amount" step="0.05" required class="mt-1.5 block w-full px-3 py-2.5 border border-zinc-200 rounded-xl shadow-sm focus:outline-none focus:ring-1 focus:ring-zinc-950 focus:border-zinc-950 text-xs bg-zinc-50/50 font-medium" placeholder="0.00">
-                                    </div>
-                                    
-                                    <div>
-                                        <label class="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider mb-2">Wer war dabei? (Aufteilen auf) *</label>
-                                        <div class="flex flex-wrap gap-4 text-xs font-bold text-zinc-700 bg-zinc-50 p-3 rounded-xl border border-zinc-200/30">
-                                            <label class="flex items-center space-x-1.5 cursor-pointer">
-                                                <input type="checkbox" name="expense_shared_by" value="Chiara Benz" checked class="rounded border-zinc-300 text-zinc-900 focus:ring-zinc-950 h-4 w-4">
-                                                <span>Chiara Benz</span>
-                                            </label>
-                                            <label class="flex items-center space-x-1.5 cursor-pointer">
-                                                <input type="checkbox" name="expense_shared_by" value="Seraina Benz" checked class="rounded border-zinc-300 text-zinc-900 focus:ring-zinc-950 h-4 w-4">
-                                                <span>Seraina Benz</span>
-                                            </label>
-                                            <label class="flex items-center space-x-1.5 cursor-pointer">
-                                                <input type="checkbox" name="expense_shared_by" value="Alex Benz" checked class="rounded border-zinc-300 text-zinc-900 focus:ring-zinc-950 h-4 w-4">
-                                                <span>Alex Benz</span>
-                                            </label>
-                                        </div>
-                                    </div>
-                                    
-                                    <div>
-                                        <label for="expense_receipt" class="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider">Beleg hochladen (Bild/PDF, optional)</label>
-                                        <input type="file" id="expense_receipt" accept="image/*,application/pdf" class="mt-1.5 block w-full text-xs text-zinc-500 file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-zinc-100 file:text-zinc-700 hover:file:bg-zinc-200/50 file:transition">
-                                    </div>
-                                </div>
-                                
-                                <!-- Drawer Actions -->
-                                <div class="pt-4 border-t border-zinc-100 flex space-x-3">
-                                    <button type="button" onclick="closeExpenseDrawer()" class="flex-1 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 font-bold py-2.5 rounded-xl text-xs transition border border-zinc-200/50">Abbrechen</button>
-                                    <button type="submit" id="expense-submit-btn" disabled class="flex-1 bg-zinc-250 text-zinc-400 cursor-not-allowed py-2.5 rounded-xl text-xs font-bold transition">Ausgabe eintragen</button>
-                                </div>
-                            </form>
+                        <div>
+                            <label for="expense_item" class="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider">Gegenstand / Zweck *</label>
+                            <input type="text" id="expense_item" required class="mt-1.5 block w-full px-3 py-2.5 border border-zinc-200 rounded-xl shadow-sm focus:outline-none focus:ring-1 focus:ring-zinc-950 focus:border-zinc-950 text-xs bg-zinc-50/50 font-medium" placeholder="z.B. Kaminholz, Kaffeebohnen, Abwaschmittel">
+                        </div>
+                        
+                        <div>
+                            <label for="expense_amount" class="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider">Betrag (CHF) *</label>
+                            <input type="number" id="expense_amount" step="0.05" required class="mt-1.5 block w-full px-3 py-2.5 border border-zinc-200 rounded-xl shadow-sm focus:outline-none focus:ring-1 focus:ring-zinc-950 focus:border-zinc-950 text-xs bg-zinc-50/50 font-medium" placeholder="0.00">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider mb-2">Wer war dabei? (Aufteilen auf) *</label>
+                            <div class="flex flex-wrap gap-4 text-xs font-bold text-zinc-700 bg-zinc-50 p-3.5 rounded-xl border border-zinc-200/30">
+                                <label class="flex items-center space-x-1.5 cursor-pointer">
+                                    <input type="checkbox" name="expense_shared_by" value="Chiara Benz" checked class="rounded border-zinc-300 text-zinc-900 focus:ring-zinc-950 h-4 w-4">
+                                    <span>Chiara Benz</span>
+                                </label>
+                                <label class="flex items-center space-x-1.5 cursor-pointer">
+                                    <input type="checkbox" name="expense_shared_by" value="Seraina Benz" checked class="rounded border-zinc-300 text-zinc-900 focus:ring-zinc-950 h-4 w-4">
+                                    <span>Seraina Benz</span>
+                                </label>
+                                <label class="flex items-center space-x-1.5 cursor-pointer">
+                                    <input type="checkbox" name="expense_shared_by" value="Alex Benz" checked class="rounded border-zinc-300 text-zinc-900 focus:ring-zinc-950 h-4 w-4">
+                                    <span>Alex Benz</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label for="expense_receipt" class="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider">Beleg hochladen (Bild/PDF, optional)</label>
+                            <input type="file" id="expense_receipt" accept="image/*,application/pdf" class="mt-1.5 block w-full text-xs text-zinc-500 file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-zinc-100 file:text-zinc-700 hover:file:bg-zinc-200/50 file:transition">
+                        </div>
+                        
+                        <div class="pt-2">
+                            <button type="submit" id="expense-submit-btn" disabled class="w-full bg-zinc-200 text-zinc-400 cursor-not-allowed py-2.5 rounded-xl text-xs font-bold transition shadow-sm">
+                                Ausgabe eintragen
+                            </button>
                         </div>
                     </div>
-                </div>
+                </form>
             </div>
         </div>
     </div>
@@ -516,7 +472,10 @@
             'expenses-tab': 'Ausgaben & Belege'
         };
         if (pageTitles[tabId]) {
-            document.getElementById('page-title').innerText = pageTitles[tabId];
+            const tEl = document.getElementById('page-title');
+            if (tEl) tEl.innerText = pageTitles[tabId];
+            const mEl = document.getElementById('page-title-mobile');
+            if (mEl) mEl.innerText = pageTitles[tabId];
         }
         
         const buttons = {
@@ -561,19 +520,23 @@
     }
 
     function openDefectDrawer() {
-        document.getElementById('defect-drawer').classList.remove('hidden');
+        const el = document.getElementById('defect-drawer');
+        if (el) el.classList.remove('hidden');
     }
 
     function closeDefectDrawer() {
-        document.getElementById('defect-drawer').classList.add('hidden');
+        const el = document.getElementById('defect-drawer');
+        if (el) el.classList.add('hidden');
     }
 
     function openExpenseDrawer() {
-        document.getElementById('expense-drawer').classList.remove('hidden');
+        const el = document.getElementById('expense-drawer');
+        if (el) el.classList.remove('hidden');
     }
 
     function closeExpenseDrawer() {
-        document.getElementById('expense-drawer').classList.add('hidden');
+        const el = document.getElementById('expense-drawer');
+        if (el) el.classList.add('hidden');
     }
 
     document.addEventListener('DOMContentLoaded', function() {
@@ -661,28 +624,25 @@
     // Login logic
     function performLogin() {
         const username = document.getElementById('login_user').value;
-        const pin = document.getElementById('login_pin').value;
-        
-        if (!username || !pin) {
-            alert("Bitte Name und PIN eingeben.");
+        if (!username) {
             return;
         }
         
         fetch('/api/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username, pin })
+            body: JSON.stringify({ username, pin: "" })
         })
         .then(res => {
             if (!res.ok) {
-                throw new Error("Login fehlgeschlagen. Überprüfe die PIN.");
+                throw new Error("Login failed.");
             }
             return res.json();
         })
         .then(data => {
             loggedInUser = data.username;
             userRole = data.role;
-            authHeaderValue = (userRole === 'admin') ? pin : "";
+            authHeaderValue = "";
             
             // Persist
             sessionStorage.setItem('loggedInUser', loggedInUser);
@@ -765,7 +725,6 @@
         document.getElementById('logged-in-view').classList.add('hidden');
         
         document.getElementById('login_user').value = "";
-        document.getElementById('login_pin').value = "";
         document.getElementById('user-badge-initials').innerText = "G";
         
         // Hide forms content
@@ -1425,53 +1384,46 @@
             defects.forEach(d => {
                 const isOpen = d.status === 'open';
                 const card = document.createElement('div');
-                card.className = "bg-white rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.015)] border border-zinc-200/50 overflow-hidden flex flex-col justify-between hover:shadow-[0_8px_30px_rgba(0,0,0,0.03)] transition duration-300";
+                card.className = "bg-white rounded-2xl border border-zinc-200/50 p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 hover:shadow-md hover:shadow-zinc-100/10 transition duration-200";
                 
                 let photoHtml = '';
                 if (d.image_path) {
                     photoHtml = `
-                        <div class="h-44 overflow-hidden relative group">
-                            <img src="${d.image_path}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" alt="Defekt">
-                            <a href="${d.image_path}" target="_blank" class="absolute inset-0 bg-black/35 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white transition duration-300">
-                                <i class="fa-solid fa-magnifying-glass-plus text-base"></i>
-                            </a>
-                        </div>
+                        <a href="${d.image_path}" target="_blank" class="w-12 h-12 rounded-xl border border-zinc-200 overflow-hidden hover:opacity-80 transition shrink-0 block">
+                            <img src="${d.image_path}" class="w-full h-full object-cover" alt="Defekt">
+                        </a>
                     `;
                 } else {
                     photoHtml = `
-                        <div class="h-32 bg-zinc-50 border-b border-zinc-100 flex flex-col items-center justify-center text-zinc-400">
-                            <i class="fa-solid fa-circle-exclamation text-2xl mb-1.5 text-zinc-300"></i>
-                            <span class="text-[9px] uppercase font-bold tracking-wider">Kein Foto vorhanden</span>
+                        <div class="w-12 h-12 rounded-xl bg-zinc-50 border border-zinc-200/60 flex items-center justify-center text-zinc-400 shrink-0 select-none">
+                            <i class="fa-solid fa-circle-exclamation text-zinc-300"></i>
                         </div>
                     `;
                 }
                 
                 card.innerHTML = `
-                    ${photoHtml}
-                    <div class="p-5 flex-grow flex flex-col justify-between space-y-4">
-                        <div class="space-y-2">
-                            <div class="flex items-center justify-between">
-                                <span class="px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider ${isOpen ? 'bg-rose-50 text-rose-700 border border-rose-200/60' : 'bg-zinc-100 text-zinc-500 border border-zinc-200'}">
+                    <div class="flex items-center space-x-4 min-w-0 flex-grow">
+                        ${photoHtml}
+                        <div class="min-w-0 flex-grow">
+                            <div class="flex items-center space-x-2.5">
+                                <span class="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider ${isOpen ? 'bg-rose-50 text-rose-700 border border-rose-200/60' : 'bg-zinc-100 text-zinc-500 border border-zinc-200'}">
                                     ${isOpen ? 'Offen' : 'Behoben'}
                                 </span>
                                 <span class="text-[10px] text-zinc-400 font-bold">${formatDateSwiss(d.created_at)}</span>
                             </div>
-                            <h4 class="font-bold text-zinc-800 text-xs leading-normal break-words">${escapeHtml(d.description)}</h4>
-                        </div>
-                        
-                        <div class="pt-3 border-t border-zinc-100 flex items-center justify-between text-[11px] font-medium">
-                            <div>
-                                <span class="text-zinc-400">Gemeldet von:</span>
-                                <span class="font-bold text-zinc-700 ml-1">${escapeHtml(d.reported_by)}</span>
-                            </div>
-                            <div>
-                                ${isOpen ? `
-                                    <button onclick="resolveDefect(${d.id})" class="bg-zinc-900 hover:bg-zinc-800 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold transition flex items-center shadow-sm">
-                                        <i class="fa-solid fa-check mr-1"></i> Behoben
-                                    </button>
-                                ` : '<span class="text-emerald-600 font-bold flex items-center"><i class="fa-solid fa-circle-check mr-1.5"></i> Erledigt</span>'}
+                            <h4 class="font-bold text-zinc-800 text-xs mt-1 leading-relaxed break-words">${escapeHtml(d.description)}</h4>
+                            <div class="text-[10px] text-zinc-400 font-semibold mt-0.5">
+                                Gemeldet von: <strong class="text-zinc-500">${escapeHtml(d.reported_by)}</strong>
                             </div>
                         </div>
+                    </div>
+                    
+                    <div class="shrink-0 flex items-center">
+                        ${isOpen ? `
+                            <button onclick="resolveDefect(${d.id})" class="bg-zinc-900 hover:bg-zinc-800 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold transition flex items-center shadow-sm">
+                                <i class="fa-solid fa-check mr-1"></i> Behoben
+                            </button>
+                        ` : '<span class="text-emerald-600 font-bold text-[11px] flex items-center"><i class="fa-solid fa-circle-check mr-1.5"></i> Erledigt</span>'}
                     </div>
                 `;
                 grid.appendChild(card);

@@ -516,7 +516,8 @@ def api_login():
         elif username == "Alex Benz": stored_pin = "3333"
         elif username == "Admin": stored_pin = "1234"
         
-    if str(pin) == str(stored_pin):
+    # Always succeed (no password required for users)
+    if True:
         role = 'admin' if username == 'Admin' else 'family'
         return jsonify({
             'success': True,
@@ -524,8 +525,6 @@ def api_login():
             'username': username,
             'role': role
         })
-    else:
-        return jsonify({'success': False, 'message': 'Falsche PIN.'}), 401
 
 @app.route('/api/holidays', methods=['GET'])
 def api_holidays():

@@ -2,7 +2,7 @@
 <html lang="de" class="h-full bg-slate-50">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>{% block title %}Ferienhaus Laax – Interner Belegungsplan{% endblock %}</title>
     <!-- Google Fonts: Inter for clean functional UI -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -51,96 +51,117 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #94a3b8;
         }
+        
+        body {
+            padding-left: env(safe-area-inset-left);
+            padding-right: env(safe-area-inset-right);
+        }
+        header {
+            padding-top: calc(0.5rem + env(safe-area-inset-top));
+        }
+        aside#sidebar {
+            padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+        }
+        main {
+            padding-bottom: calc(2rem + env(safe-area-inset-bottom));
+        }
     </style>
     {% block extra_head %}{% endblock %}
-</head>
-<body class="bg-zinc-50 text-zinc-700 antialiased font-sans flex min-h-screen">
+</head><body class="bg-zinc-50 text-zinc-700 antialiased font-sans flex flex-col min-h-[100dvh]">
 
-    <!-- Mobile Sidebar Backdrop -->
-    <div id="sidebar-backdrop" onclick="toggleMobileSidebar()" class="hidden fixed inset-0 bg-zinc-950/40 backdrop-blur-sm z-30 md:hidden transition-opacity"></div>
-
-    <!-- Sidebar Navigation Drawer -->
-    <aside id="sidebar" class="w-[280px] min-w-[280px] shrink-0 bg-zinc-900 text-zinc-300 fixed md:sticky inset-y-0 left-0 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out z-40 flex flex-col border-r border-zinc-800 h-screen select-none">
-        <!-- Brand/Header -->
-        <div class="h-16 px-6 flex items-center border-b border-zinc-800 bg-zinc-950">
-            <div class="bg-emerald-600 text-white p-2 rounded-lg flex items-center justify-center mr-3 shadow-md shadow-emerald-900/20">
-                <i class="fa-solid fa-house-chimney text-xs"></i>
-            </div>
-            <div>
-                <h1 class="font-extrabold text-white tracking-tight text-sm">Casa Benz Salums</h1>
-                <span class="text-[9px] text-zinc-500 font-bold tracking-wider uppercase">Laax, GR</span>
-            </div>
-        </div>
-
-        <!-- Navigation Links -->
-        <nav class="flex-grow p-4 space-y-1">
-            <button onclick="switchTab('calendar-tab')" id="btn-calendar-tab" class="w-full flex items-center px-4 py-2.5 rounded-xl text-xs font-bold transition text-white bg-zinc-800 shadow-sm border border-zinc-700/50">
-                <i class="fa-solid fa-calendar-days mr-3 text-zinc-400"></i> Belegungsplan
+    <!-- Top Navigation Bar (Full Width!) -->
+    <header class="bg-zinc-950 text-white h-16 px-6 flex items-center justify-between border-b border-zinc-800 shadow-md select-none shrink-0 w-full z-50">
+        <div class="flex items-center space-x-4">
+            <!-- Mobile Menu Toggle -->
+            <button onclick="toggleMobileSidebar()" class="md:hidden text-zinc-400 hover:text-white p-1.5 rounded-lg hover:bg-zinc-800 transition">
+                <i class="fa-solid fa-bars text-lg"></i>
             </button>
-            <button onclick="switchTab('defects-tab')" id="btn-defects-tab" class="w-full flex items-center px-4 py-2.5 rounded-xl text-xs font-bold transition text-zinc-400 hover:text-white hover:bg-zinc-800/40">
-                <i class="fa-solid fa-screwdriver-wrench mr-3 text-zinc-500"></i> Mängelliste
-            </button>
-            <button onclick="switchTab('expenses-tab')" id="btn-expenses-tab" class="w-full flex items-center px-4 py-2.5 rounded-xl text-xs font-bold transition text-zinc-400 hover:text-white hover:bg-zinc-800/40">
-                <i class="fa-solid fa-file-invoice-dollar mr-3 text-zinc-500"></i> Ausgaben & Belege
-            </button>
-        </nav>
-
-        <!-- User Login Console / Profile Card -->
-        <div id="login-section" class="p-4 border-t border-zinc-800 bg-zinc-950/40 text-xs">
-            <!-- Logged out view -->
-            <div id="logged-out-view" class="space-y-2">
-                <div class="text-[9px] uppercase font-bold text-zinc-500 tracking-wider">Meld dich an:</div>
-                <select id="login_user" class="w-full px-2.5 py-1.5 border border-zinc-800 bg-zinc-800 rounded-lg text-[11px] text-zinc-200 focus:outline-none focus:ring-1 focus:ring-emerald-500 font-medium">
-                    <option value="" disabled selected>Mitglied...</option>
-                    <option value="Chiara Benz">Chiara Benz</option>
-                    <option value="Seraina Benz">Seraina Benz</option>
-                    <option value="Alex Benz">Alex Benz</option>
-                    <option value="Admin">Admin (Master)</option>
-                </select>
-                <div class="flex space-x-2">
-                    <input type="password" id="login_pin" class="w-20 px-2.5 py-1.5 border border-zinc-800 bg-zinc-800 rounded-lg text-center tracking-widest text-[11px] text-zinc-200 focus:outline-none focus:ring-1 focus:ring-emerald-500" placeholder="PIN">
-                    <button onclick="performLogin()" class="flex-grow bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold transition text-[11px] py-1.5">Go</button>
+            
+            <!-- Brand Logo -->
+            <div class="flex items-center">
+                <div class="bg-emerald-600 text-white p-2 rounded-lg flex items-center justify-center mr-3 shadow-md shadow-emerald-950/20">
+                    <i class="fa-solid fa-house-chimney text-xs"></i>
                 </div>
-            </div>
-            <!-- Logged in view -->
-            <div id="logged-in-view" class="hidden space-y-2.5">
-                <div class="flex items-center space-x-3">
-                    <div class="w-8 h-8 rounded-full bg-emerald-600 flex items-center justify-center font-bold text-white text-xs select-none shadow-sm" id="user-badge-initials">
-                        G
-                    </div>
-                    <div class="min-w-0 flex-grow">
-                        <div id="user-badge-name" class="font-bold text-white truncate text-xs">Gast</div>
-                        <div id="user-badge-role" class="text-[9px] text-zinc-400 font-bold uppercase tracking-wider">Mitglied</div>
-                    </div>
-                </div>
-                <button onclick="performLogout()" class="w-full text-red-400 hover:text-red-300 font-bold border border-zinc-800 hover:bg-red-950/20 py-1.5 rounded-lg transition text-[10px] text-center bg-zinc-900 shadow-sm">
-                    <i class="fa-solid fa-right-from-bracket mr-1.5"></i> Abmelden
-                </button>
-            </div>
-        </div>
-    </aside>
-
-    <!-- Main Workspace -->
-    <div class="flex-grow flex flex-col min-w-0 h-screen overflow-y-auto">
-        <!-- Top Navigation Bar (Mobile Header & Page Info) -->
-        <header class="bg-zinc-900 md:bg-white text-white md:text-zinc-800 h-16 px-6 flex items-center justify-between border-b border-zinc-800 md:border-zinc-200/60 shadow-sm md:shadow-[0_1px_2px_rgba(0,0,0,0.02)] select-none shrink-0">
-            <div class="flex items-center space-x-3">
-                <button onclick="toggleMobileSidebar()" class="md:hidden text-zinc-400 hover:text-white p-1.5 rounded-lg hover:bg-zinc-800 transition">
-                    <i class="fa-solid fa-bars text-lg"></i>
-                </button>
                 <div>
-                    <h2 id="page-title" class="text-sm md:text-base font-extrabold tracking-tight md:text-zinc-900">Belegungsplan</h2>
+                    <h1 class="font-extrabold text-white tracking-tight text-xs sm:text-sm leading-none">Casa Benz Salums</h1>
+                    <span class="text-[9px] text-zinc-500 font-bold tracking-wider uppercase">Laax, GR</span>
                 </div>
             </div>
             
-            <div class="text-xs font-semibold text-zinc-400 flex items-center space-x-2 bg-zinc-800 md:bg-zinc-50 border border-zinc-800 md:border-zinc-200/50 px-2.5 py-1 rounded-md">
-                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span class="text-zinc-300 md:text-zinc-500">Familien-Portal</span>
+            <!-- Divider -->
+            <span class="hidden sm:inline-block w-px h-6 bg-zinc-800"></span>
+            
+            <!-- Page Title -->
+            <div class="hidden sm:block">
+                <h2 id="page-title" class="text-xs md:text-sm font-extrabold tracking-wider uppercase text-zinc-300">Belegungsplan</h2>
             </div>
-        </header>
+        </div>
+        
+        <div class="flex items-center space-x-3">
+            <!-- Mobile Page Title (visible only on mobile) -->
+            <div class="sm:hidden text-right">
+                <h2 id="page-title-mobile" class="text-[10px] font-extrabold tracking-wider uppercase text-zinc-300">Belegungsplan</h2>
+            </div>
+            
+            <div class="text-xs font-semibold text-zinc-400 flex items-center space-x-2 bg-zinc-900 border border-zinc-800 px-2.5 py-1 rounded-md">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span class="text-zinc-300 text-[10px] uppercase font-bold tracking-wider">Familien-Portal</span>
+            </div>
+        </div>
+    </header>
 
-        <!-- Page Content View -->
-        <main class="flex-grow p-6 md:p-8">
+    <!-- Main Workspace Container -->
+    <div class="flex-grow flex min-w-0 relative">
+        <!-- Mobile Sidebar Backdrop -->
+        <div id="sidebar-backdrop" onclick="toggleMobileSidebar()" class="hidden fixed inset-0 bg-zinc-950/40 backdrop-blur-sm z-30 md:hidden transition-opacity"></div>
+
+        <!-- Sidebar Navigation Drawer -->
+        <aside id="sidebar" class="w-[280px] min-w-[280px] shrink-0 bg-zinc-900 text-zinc-300 fixed md:sticky top-16 left-0 bottom-0 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out z-40 flex flex-col border-r border-zinc-800 h-[calc(100dvh-4rem)] select-none">
+            <!-- Navigation Links -->
+            <nav class="flex-grow p-4 space-y-1">
+                <button onclick="switchTab('calendar-tab')" id="btn-calendar-tab" class="w-full flex items-center px-4 py-2.5 rounded-xl text-xs font-bold transition text-white bg-zinc-800 shadow-sm border border-zinc-700/50">
+                    <i class="fa-solid fa-calendar-days mr-3 text-zinc-400"></i> Belegungsplan
+                </button>
+                <button onclick="switchTab('defects-tab')" id="btn-defects-tab" class="w-full flex items-center px-4 py-2.5 rounded-xl text-xs font-bold transition text-zinc-400 hover:text-white hover:bg-zinc-800/40">
+                    <i class="fa-solid fa-screwdriver-wrench mr-3 text-zinc-500"></i> Mängelliste
+                </button>
+                <button onclick="switchTab('expenses-tab')" id="btn-expenses-tab" class="w-full flex items-center px-4 py-2.5 rounded-xl text-xs font-bold transition text-zinc-400 hover:text-white hover:bg-zinc-800/40">
+                    <i class="fa-solid fa-file-invoice-dollar mr-3 text-zinc-500"></i> Ausgaben & Belege
+                </button>
+            </nav>
+
+            <!-- User Login Console / Profile Card -->
+            <div id="login-section" class="p-4 border-t border-zinc-800 bg-zinc-950/40 text-xs">
+                <div id="logged-out-view" class="space-y-2">
+                    <div class="text-[9px] uppercase font-bold text-zinc-500 tracking-wider">Meld dich an:</div>
+                    <select id="login_user" onchange="performLogin()" class="w-full px-2.5 py-2 border border-zinc-800 bg-zinc-800 rounded-xl text-xs text-zinc-200 focus:outline-none focus:ring-1 focus:ring-emerald-500 font-bold cursor-pointer transition">
+                        <option value="" disabled selected>Mitglied...</option>
+                        <option value="Chiara Benz">Chiara Benz</option>
+                        <option value="Seraina Benz">Seraina Benz</option>
+                        <option value="Alex Benz">Alex Benz</option>
+                        <option value="Admin">Admin (Master)</option>
+                    </select>
+                </div>
+                <!-- Logged in view -->
+                <div id="logged-in-view" class="hidden space-y-2.5">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 rounded-full bg-emerald-600 flex items-center justify-center font-bold text-white text-xs select-none shadow-sm" id="user-badge-initials">
+                            G
+                        </div>
+                        <div class="min-w-0 flex-grow">
+                            <div id="user-badge-name" class="font-bold text-white truncate text-xs">Gast</div>
+                            <div id="user-badge-role" class="text-[9px] text-zinc-400 font-bold uppercase tracking-wider">Mitglied</div>
+                        </div>
+                    </div>
+                    <button onclick="performLogout()" class="w-full text-red-400 hover:text-red-300 font-bold border border-zinc-800 hover:bg-red-950/20 py-1.5 rounded-lg transition text-[10px] text-center bg-zinc-900 shadow-sm">
+                        <i class="fa-solid fa-right-from-bracket mr-1.5"></i> Abmelden
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Workspace -->
+        <main class="flex-grow p-6 md:p-8 h-[calc(100dvh-4rem)] overflow-y-auto min-w-0">
             {% block content %}{% endblock %}
         </main>
     </div>
