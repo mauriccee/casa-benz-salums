@@ -621,132 +621,162 @@
         loadPublicPendingBookings();
     });
 
-    // Login logic
-    function performLogin() {
-        const username = document.getElementById('login_user').value;
-        if (!username) {
-            return;
-        }
-        
+    // Shared login worker — called from sidebar or header dropdown
+    function doLogin(username) {
+        if (!username) return;
         fetch('/api/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, pin: "" })
         })
         .then(res => {
-            if (!res.ok) {
-                throw new Error("Login failed.");
-            }
+            if (!res.ok) throw new Error("Login fehlgeschlagen.");
             return res.json();
         })
         .then(data => {
             loggedInUser = data.username;
             userRole = data.role;
             authHeaderValue = "";
-            
-            // Persist
             sessionStorage.setItem('loggedInUser', loggedInUser);
             sessionStorage.setItem('userRole', userRole);
             sessionStorage.setItem('authHeaderValue', authHeaderValue);
-            
             applyLoginUI();
-            alert(data.message);
         })
-        .catch(err => {
-            alert(err.message);
-        });
+        .catch(err => alert(err.message));
+    }
+
+    // Called from sidebar dropdown
+    function performLogin() {
+        const el = document.getElementById('login_user');
+        if (el) doLogin(el.value);
+    }
+
+    // Called from header dropdown
+    function performLoginFromHeader() {
+        const el = document.getElementById('login_user_header');
+        if (el) doLogin(el.value);
     }
 
     function performLogout() {
         loggedInUser = null;
         userRole = null;
         authHeaderValue = "";
-        
         sessionStorage.removeItem('loggedInUser');
         sessionStorage.removeItem('userRole');
         sessionStorage.removeItem('authHeaderValue');
-        
         applyLogoutUI();
-        alert("Erfolgreich abgemeldet.");
     }
 
     function applyLoginUI() {
-        document.getElementById('logged-out-view').classList.add('hidden');
-        document.getElementById('logged-in-view').classList.remove('hidden');
-        
-        document.getElementById('user-badge-name').innerText = loggedInUser;
-        document.getElementById('user-badge-role').innerText = (userRole === 'admin') ? 'Admin' : 'Mitglied';
-        
+        // --- Sidebar login section ---
+        const loggedOutView = document.getElementById('logged-out-view');
+        const loggedInView = document.getElementById('logged-in-view');
+        if (loggedOutView) loggedOutView.classList.add('hidden');
+        if (loggedInView) loggedInView.classList.remove('hidden');
+
+        const badgeName = document.getElementById('user-badge-name');
+        const badgeRole = document.getElementById('user-badge-role');
+        const badgeInitials = document.getElementById('user-badge-initials');
+        if (badgeName) badgeName.innerText = loggedInUser;
+        if (badgeRole) badgeRole.innerText = (userRole === 'admin') ? 'Admin' : 'Mitglied';
+
+        // --- Header login pill ---
+        const headerOut = document.getElementById('header-logged-out');
+        const headerIn = document.getElementById('header-logged-in');
+        if (headerOut) headerOut.classList.add('hidden');
+        if (headerIn) headerIn.classList.remove('hidden');
+
+        const hInitials = document.getElementById('header-user-initials');
+        const hName = document.getElementById('header-user-name');
+
         if (loggedInUser) {
             const parts = loggedInUser.split(' ');
             const initials = parts.length > 1 ? parts[0][0] + parts[1][0] : parts[0][0];
-            document.getElementById('user-badge-initials').innerText = initials.toUpperCase();
+            if (badgeInitials) badgeInitials.innerText = initials.toUpperCase();
+            if (hInitials) hInitials.innerText = initials.toUpperCase();
+            if (hName) hName.innerText = loggedInUser;
         }
-        
-        // Show/hide forms content depending on login
+
+        // Show/hide forms
         document.querySelectorAll('.hidden-when-logged-out').forEach(el => el.classList.remove('hidden'));
-        document.getElementById('booking-login-alert').classList.add('hidden');
-        document.getElementById('defect-login-alert').classList.add('hidden');
-        document.getElementById('expense-login-alert').classList.add('hidden');
-        
-        // Pre-fill inputs
-        document.getElementById('booking_guest_display').value = loggedInUser;
-        document.getElementById('defect_guest_display').value = loggedInUser;
-        document.getElementById('expense_paid_display').value = loggedInUser;
-        
-        // Enable buttons
-        document.getElementById('booking-submit-btn').disabled = false;
-        document.getElementById('booking-submit-btn').className = "w-full bg-zinc-900 hover:bg-zinc-800 text-white py-2.5 rounded-xl text-xs font-bold transition mt-2 shadow-sm cursor-pointer";
-        
-        document.getElementById('defect-submit-btn').disabled = false;
-        document.getElementById('defect-submit-btn').className = "w-full bg-zinc-900 hover:bg-zinc-800 text-white py-2.5 rounded-xl text-xs font-bold transition mt-2 shadow-sm cursor-pointer";
-        
-        document.getElementById('expense-submit-btn').disabled = false;
-        document.getElementById('expense-submit-btn').className = "w-full bg-zinc-900 hover:bg-zinc-800 text-white py-2.5 rounded-xl text-xs font-bold transition mt-2 shadow-sm cursor-pointer";
-        
-        // Show Admin dashboard only if logged in as Admin
+        ['booking-login-alert','defect-login-alert','expense-login-alert'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.classList.add('hidden');
+        });
+
+        // Pre-fill name fields
+        ['booking_guest_display','defect_guest_display','expense_paid_display'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.value = loggedInUser;
+        });
+
+        // Enable submit buttons
+        ['booking-submit-btn','defect-submit-btn','expense-submit-btn'].forEach(id => {
+            const btn = document.getElementById(id);
+            if (btn) {
+                btn.disabled = false;
+                btn.className = "w-full bg-zinc-900 hover:bg-zinc-800 text-white py-2.5 rounded-xl text-xs font-bold transition mt-2 shadow-sm cursor-pointer";
+            }
+        });
+
+        // Admin panel
+        const adminPanel = document.getElementById('admin-panel');
+        const adminIndicator = document.getElementById('admin-panel-indicator');
         if (userRole === 'admin') {
-            document.getElementById('admin-panel').classList.remove('hidden');
-            document.getElementById('admin-panel-indicator').classList.add('hidden');
+            if (adminPanel) adminPanel.classList.remove('hidden');
+            if (adminIndicator) adminIndicator.classList.add('hidden');
             loadAdminBookingsTable();
         } else {
-            document.getElementById('admin-panel').classList.add('hidden');
-            document.getElementById('admin-panel-indicator').classList.remove('hidden');
+            if (adminPanel) adminPanel.classList.add('hidden');
+            if (adminIndicator) adminIndicator.classList.remove('hidden');
         }
-        
-        // Reload all data so that actions become visible depending on who is logged in
+
         loadPublicPendingBookings();
         loadDefects();
         loadExpenses();
     }
 
     function applyLogoutUI() {
-        document.getElementById('logged-out-view').classList.remove('hidden');
-        document.getElementById('logged-in-view').classList.add('hidden');
-        
-        document.getElementById('login_user').value = "";
-        document.getElementById('user-badge-initials').innerText = "G";
-        
-        // Hide forms content
+        // --- Sidebar ---
+        const loggedOutView = document.getElementById('logged-out-view');
+        const loggedInView = document.getElementById('logged-in-view');
+        if (loggedOutView) loggedOutView.classList.remove('hidden');
+        if (loggedInView) loggedInView.classList.add('hidden');
+        const loginUser = document.getElementById('login_user');
+        if (loginUser) loginUser.value = "";
+        const badgeInitials = document.getElementById('user-badge-initials');
+        if (badgeInitials) badgeInitials.innerText = "G";
+
+        // --- Header pill ---
+        const headerOut = document.getElementById('header-logged-out');
+        const headerIn = document.getElementById('header-logged-in');
+        if (headerOut) headerOut.classList.remove('hidden');
+        if (headerIn) headerIn.classList.add('hidden');
+        const headerSelect = document.getElementById('login_user_header');
+        if (headerSelect) headerSelect.value = "";
+
+        // Hide forms
         document.querySelectorAll('.hidden-when-logged-out').forEach(el => el.classList.add('hidden'));
-        document.getElementById('booking-login-alert').classList.remove('hidden');
-        document.getElementById('defect-login-alert').classList.remove('hidden');
-        document.getElementById('expense-login-alert').classList.remove('hidden');
-        
-        // Disable buttons
-        document.getElementById('booking-submit-btn').disabled = true;
-        document.getElementById('booking-submit-btn').className = "w-full bg-zinc-200 text-zinc-400 cursor-not-allowed py-2.5 rounded-xl text-xs font-bold transition mt-2 shadow-sm";
-        
-        document.getElementById('defect-submit-btn').disabled = true;
-        document.getElementById('defect-submit-btn').className = "w-full bg-zinc-200 text-zinc-400 cursor-not-allowed py-2.5 rounded-xl text-xs font-bold transition mt-2 shadow-sm";
-        
-        document.getElementById('expense-submit-btn').disabled = true;
-        document.getElementById('expense-submit-btn').className = "w-full bg-zinc-200 text-zinc-400 cursor-not-allowed py-2.5 rounded-xl text-xs font-bold transition mt-2 shadow-sm";
-        
-        // Hide Admin Dashboard
-        document.getElementById('admin-panel').classList.add('hidden');
-        document.getElementById('admin-panel-indicator').classList.remove('hidden');
-        
+        ['booking-login-alert','defect-login-alert','expense-login-alert'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.classList.remove('hidden');
+        });
+
+        // Disable submit buttons
+        ['booking-submit-btn','defect-submit-btn','expense-submit-btn'].forEach(id => {
+            const btn = document.getElementById(id);
+            if (btn) {
+                btn.disabled = true;
+                btn.className = "w-full bg-zinc-200 text-zinc-400 cursor-not-allowed py-2.5 rounded-xl text-xs font-bold transition mt-2 shadow-sm";
+            }
+        });
+
+        // Admin panel
+        const adminPanel = document.getElementById('admin-panel');
+        const adminIndicator = document.getElementById('admin-panel-indicator');
+        if (adminPanel) adminPanel.classList.add('hidden');
+        if (adminIndicator) adminIndicator.classList.remove('hidden');
+
         loadPublicPendingBookings();
         loadDefects();
         loadExpenses();
